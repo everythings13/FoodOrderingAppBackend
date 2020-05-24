@@ -5,8 +5,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "Coupon")
 @NamedQueries({
-        @NamedQuery(name="getCouponDetails",query = "SELECT o FROM OrderEntity o WHERE o.couponName =:couponName"),
-        @NamedQuery(name="getCouponDetailsById",query = "SELECT o FROM OrderEntity o WHERE o.id =:id")
+        @NamedQuery(name="getCouponDetails",query = "SELECT o FROM OrderCouponEntity o WHERE o.couponName =:couponName"),
+        @NamedQuery(name="getCouponDetailsById",query = "SELECT o FROM OrderCouponEntity o WHERE o.id =:id")
 })
 public class OrderCouponEntity {
     @Id
