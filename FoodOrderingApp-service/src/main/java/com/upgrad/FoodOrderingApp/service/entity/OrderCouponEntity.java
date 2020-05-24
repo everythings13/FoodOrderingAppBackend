@@ -4,7 +4,10 @@ import javax.persistence.*;
 import java.util.UUID;
 @Entity
 @Table(name = "Coupon")
-public class OrderEntity {
+@NamedQueries({
+        @NamedQuery(name="getCouponDetails",query = "SELECT o FROM OrderEntity o WHERE o.couponName =:couponName")
+})
+public class OrderCouponEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
