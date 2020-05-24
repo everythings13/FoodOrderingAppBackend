@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,7 @@ public class OrderListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "bill")
-    private long bill;
+    private BigDecimal bill;
     @Column(name="coupon_id")
     private OrderCouponEntity coupon;
     @Column(name = "discount")
@@ -29,11 +30,11 @@ public class OrderListEntity {
         this.id = id;
     }
 
-    public long getBill() {
+    public BigDecimal getBill() {
         return bill;
     }
 
-    public void setBill(long bill) {
+    public void setBill(BigDecimal bill) {
         this.bill = bill;
     }
 

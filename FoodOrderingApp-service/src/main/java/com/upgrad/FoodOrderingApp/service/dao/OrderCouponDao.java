@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class OrderCouponDao {
@@ -19,7 +20,7 @@ public class OrderCouponDao {
 
     @Transactional
     public OrderCouponEntity getOrderDetails(String couponName){
-       return entityManager.createNamedQuery("getCouponDetails",OrderCouponEntity.class).setParameter(couponName,couponName).
+       return entityManager.createNamedQuery("getCouponDetails",OrderCouponEntity.class).setParameter("couponName",couponName).
                getSingleResult();
     }
 
@@ -34,6 +35,9 @@ public class OrderCouponDao {
         return order.getId();
     }
 
-
+    @Transactional
+    public OrderCouponEntity getOrderDetailsById(UUID id){
+      return  entityManager.createNamedQuery("getCouponDetailsById",OrderCouponEntity.class).setParameter("id",id).getSingleResult();
+    }
 
 }
