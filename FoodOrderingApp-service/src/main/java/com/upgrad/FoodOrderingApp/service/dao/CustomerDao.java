@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import org.springframework.stereotype.Repository;
 
@@ -16,12 +17,12 @@ public class CustomerDao {
         return customerEntity;
     }
 
-   /* public CustomerEntity getCustomerByUUID(final String userUuid) {
+    public CustomerEntity getCustomerByUUID(final String userUuid) {
         return entityManager.createNamedQuery("customerByUuid", CustomerEntity.class).setParameter("uuid", userUuid).getSingleResult();
     }
 
-    public CustomerEntity getCustomerByUsername(final String username) {
-        return entityManager.createNamedQuery("customerByUsername", CustomerEntity.class).setParameter("username", username).getSingleResult();
+    public CustomerEntity getCustomerByEmail(final String email) {
+        return entityManager.createNamedQuery("customerByEmail", CustomerEntity.class).setParameter("email", email).getSingleResult();
     }
 
     public CustomerEntity getCustomer(final Integer id)
@@ -29,9 +30,16 @@ public class CustomerDao {
         return entityManager.createNamedQuery("customerById", CustomerEntity.class).setParameter("id", id).getSingleResult();
     }
 
-    public UserAuthEntity getUserByToken(final String token){
-        return entityManager.createNamedQuery()
-    }*/
+    public CustomerAuthEntity getUserByToken(final String token){
+        return entityManager.createNamedQuery("customerByAuthtoken", CustomerAuthEntity.class).setParameter("accessToken", token).getSingleResult();
+    }
+
+    public CustomerAuthEntity createToken (CustomerAuthEntity customerAuthEntity)
+    {
+        entityManager.persist(customerAuthEntity);
+        return customerAuthEntity;
+    }
+
 }
 
 

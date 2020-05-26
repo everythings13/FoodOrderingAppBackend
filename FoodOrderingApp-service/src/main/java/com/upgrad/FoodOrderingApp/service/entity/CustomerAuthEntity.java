@@ -55,12 +55,12 @@ public class CustomerAuthEntity {
         this.uuid = uuid;
     }
 
-    public CustomerEntity getCustomerId() {
+    public CustomerEntity getCustomer() {
         return customer;
     }
 
-    public void setUser(CustomerEntity user) {
-        this.customer = user;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public String getAccessToken() {
