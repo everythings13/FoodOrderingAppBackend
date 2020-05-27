@@ -1,8 +1,6 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
@@ -34,7 +32,7 @@ public class CustomerController {
         customerEntity.setLastname(signUpCustomerRequest.getLastName());
         customerEntity.setSalt("1234abc");
         CustomerEntity createdCustomerEntity= customerService.createCustomer(customerEntity);
-        SignupCustomerResponse signupUserResponse=new SignupCustomerResponse().id(createdCustomerEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
+        SignupCustomerResponse signupUserResponse=new SignupCustomerResponse().id(createdCustomerEntity.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SignupCustomerResponse>(signupUserResponse, HttpStatus.CREATED);
     }
 
@@ -43,16 +41,35 @@ public class CustomerController {
     {
         String[] credentials= new String(Base64.getDecoder().decode(authorization.split("Basic ")[1])).split(":");
         CustomerAuthEntity customerAuthEntity=customerService.authenticate(credentials[0],credentials[1]);
-        LoginResponse signinResponse=new LoginResponse().id(customerAuthEntity.getUuid()).message("TOKEN GENERATED SUCCESSFULLY");
-        signinResponse.setFirstName(customerAuthEntity.getCustomer().getFirstname());
-        signinResponse.setLastName(customerAuthEntity.getCustomer().getLastname());
-        signinResponse.setContactNumber(customerAuthEntity.getCustomer().getContactnumber());
-        signinResponse.setEmailAddress(customerAuthEntity.getCustomer().getEmail());
+        LoginResponse loginResponse=new LoginResponse().id(customerAuthEntity.getUuid()).message("LOGGED IN SUCCESSFULLY");
+        loginResponse.setFirstName(customerAuthEntity.getCustomer().getFirstname());
+        loginResponse.setLastName(customerAuthEntity.getCustomer().getLastname());
+        loginResponse.setContactNumber(customerAuthEntity.getCustomer().getContactnumber());
+        loginResponse.setEmailAddress(customerAuthEntity.getCustomer().getEmail());
         HttpHeaders headers = new HttpHeaders();
         headers.add("access-token", customerAuthEntity.getAccessToken());
-        return new ResponseEntity<LoginResponse>(signinResponse,headers,HttpStatus.OK);
+        return new ResponseEntity<LoginResponse>(loginResponse,headers,HttpStatus.OK);
     }
 
 
+    @RequestMapping(method = RequestMethod.POST, path =  "/customer/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<LogoutResponse> logout(@RequestHeader("Authorization") String authorization)
+    {
+        String token = authorization.split("Bearer ")[1];
+        CustomerAuthEntity customerAuthEntity=customerService.logout(token);
+        LogoutResponse logoutResponse=new LogoutResponse().id(customerAuthEntity.getCustomer().getUuid()).message("LOGGED OUT SUCCESSFULLY");
+        return new ResponseEntity<LogoutResponse>(logoutResponse,HttpStatus.OK);
+    }
 
+    @RequestMapping(method = RequestMethod.PUT, path = "/customer", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdateCustomerResponse> updateCustomer(@RequestBody UpdateCustomerRequest updateCustomerRequest, @RequestHeader
+    ("Authorization") String authorization)
+    {
+        String token = authorization.split("Bearer ")[1];
+        CustomerEntity customerEntity = customerService.updateCustomer(token, updateCustomerRequest.getFirstName(), updateCustomerRequest.getLastName());
+        UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse().id(customerEntity.getUuid()).firstName(customerEntity.getFirstname()).lastName(customerEntity.getLastname()).
+                status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+        return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse,HttpStatus.OK);
+
+    }
 }

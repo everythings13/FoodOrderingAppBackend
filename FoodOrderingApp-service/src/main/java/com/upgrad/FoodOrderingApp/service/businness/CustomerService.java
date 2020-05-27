@@ -13,7 +13,8 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
-public class CustomerService {
+public class
+CustomerService {
 
 @Autowired
 CustomerDao customerDao;
@@ -44,7 +45,7 @@ public CustomerAuthEntity authenticate(String email, String password){
             customerAuthToken.setUuid(UUID.randomUUID().toString());
             customerAuthToken.setLoginAt(now);
             customerAuthToken.setExpiresAt(expiresAt);
-            customerDao.createToken(customerAuthToken);
+            customerDao.login(customerAuthToken);
         }
     }
     return customerAuthToken;
@@ -57,6 +58,25 @@ public CustomerAuthEntity authenticate(String email, String password){
             return customerEntity;
         }
         return null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity logout(String token){
+      CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
+      final ZonedDateTime now = ZonedDateTime.now();
+      customerAuthEntity.setLogoutAt(now);
+      return customerDao.logout(customerAuthEntity);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updateCustomer(String token, String firstName, String lastName)
+    {
+        CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
+        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
+        customerEntity.setFirstname(firstName);
+        customerEntity.setLastname((lastName));
+        return customerDao.updateCustomer(customerEntity);
+
     }
 
 
