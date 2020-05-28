@@ -25,6 +25,10 @@ public class CustomerDao {
         return entityManager.createNamedQuery("customerByEmail", CustomerEntity.class).setParameter("email", email).getSingleResult();
     }
 
+    public CustomerEntity getCustomerByContactNumber(final String contactnumber) {
+        return entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactnumber", contactnumber).getSingleResult();
+    }
+
     public CustomerEntity getCustomer(final Integer id)
     {
         return entityManager.createNamedQuery("customerById", CustomerEntity.class).setParameter("id", id).getSingleResult();
@@ -57,6 +61,8 @@ public class CustomerDao {
         entityManager.merge(customerEntity);
         return customerEntity;
     }
+
+
 }
 
 
