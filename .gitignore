@@ -1,0 +1,10 @@
+.idea/workspace.xml
+*.class
+*.jar
+*.lst
+*.sql
+*.properties
+
+FoodOrderingApp-api/target
+FoodOrderingApp-api/src/main/resources/
+*.yaml
