@@ -79,6 +79,18 @@ public CustomerAuthEntity authenticate(String email, String password){
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updatePassword(String token, String old_password, String new_password)
+    {
+        CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
+        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
+        String oldEncryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), old_password);
+        String newEncryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), new_password);
 
+        if(old_password != null && new_password != null && oldEncryptedPassword.equalsIgnoreCase(customerEntity.getPassword())) {
+            customerEntity.setPassword(newEncryptedPassword);
+        }
+        return customerDao.updatePassword(customerEntity);
+    }
 }
 
