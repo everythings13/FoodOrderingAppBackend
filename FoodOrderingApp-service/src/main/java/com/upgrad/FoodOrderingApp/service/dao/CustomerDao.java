@@ -26,7 +26,12 @@ public class CustomerDao {
     }
 
     public CustomerEntity getCustomerByContactNumber(final String contactnumber) {
-        return entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactnumber", contactnumber).getSingleResult();
+        try {
+            return entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactnumber", contactnumber).getSingleResult();
+        }catch (Exception e)
+        {
+            return null;
+        }
     }
 
     public CustomerEntity getCustomer(final Integer id)
@@ -35,7 +40,11 @@ public class CustomerDao {
     }
 
     public CustomerAuthEntity getUserByToken(final String token){
-        return entityManager.createNamedQuery("customerByAuthtoken", CustomerAuthEntity.class).setParameter("accessToken", token).getSingleResult();
+        try {
+            return entityManager.createNamedQuery("customerByAuthtoken", CustomerAuthEntity.class).setParameter("accessToken", token).getSingleResult();
+        }catch(Exception e){
+            return null;
+        }
     }
 
     public CustomerAuthEntity login (CustomerAuthEntity customerAuthEntity)

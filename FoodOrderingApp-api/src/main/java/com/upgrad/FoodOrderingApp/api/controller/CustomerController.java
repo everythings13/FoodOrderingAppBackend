@@ -4,6 +4,8 @@ import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,9 +40,17 @@ public class CustomerController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/customer/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LoginResponse> login(@RequestHeader("Authorization") String authorization)
+    public ResponseEntity<LoginResponse> login(@RequestHeader("Authorization") String authorization) throws AuthenticationFailedException
     {
+        if(!authorization.contains("Basic"))
+        {
+            throw new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password!");
+        }
         String[] credentials= new String(Base64.getDecoder().decode(authorization.split("Basic ")[1])).split(":");
+        if(credentials.length == 0)
+        {
+            throw new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password!");
+        }
         CustomerAuthEntity customerAuthEntity=customerService.authenticate(credentials[0],credentials[1]);
         LoginResponse loginResponse=new LoginResponse().id(customerAuthEntity.getUuid()).message("LOGGED IN SUCCESSFULLY");
         loginResponse.setFirstName(customerAuthEntity.getCustomer().getFirstname());
@@ -54,10 +64,16 @@ public class CustomerController {
 
 
     @RequestMapping(method = RequestMethod.POST, path =  "/customer/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LogoutResponse> logout(@RequestHeader("Authorization") String authorization)
+    public ResponseEntity<LogoutResponse> logout(@RequestHeader("Authorization") String authorization) throws AuthorizationFailedException
     {
-        String token = authorization.split("Bearer ")[1];
+        if(!authorization.contains("Bearer"))
+        {
+            throw new AuthorizationFailedException("ATH-004","Invalid token.");
+        }
+        String token = authorization.split("Bearer")[1];
+
         CustomerAuthEntity customerAuthEntity=customerService.logout(token);
+
         LogoutResponse logoutResponse=new LogoutResponse().id(customerAuthEntity.getCustomer().getUuid()).message("LOGGED OUT SUCCESSFULLY");
         return new ResponseEntity<LogoutResponse>(logoutResponse,HttpStatus.OK);
     }
