@@ -6,9 +6,12 @@ public final class MessageKeys {
     public static final String ATHR_001 = "ATHR-001";
     public static final String ATHR_002 = "ATHR-002";
     public static final String ATHR_003 = "ATHR-003";
+    public static final String ATHR_004 = "ATHR-004";
     public static final String SAR_001 = "SAR-001";
     public static final String SAR_002 = "SAR-002";
     public static final String ANF_002 = "ANF-002";
+    public static final String ANF_005 = "ANF-005";
+    public static final String ANF_003 = "ANF-003";
 
 
     //Keys related to User
@@ -29,4 +32,13 @@ public final class MessageKeys {
 
     public static final String NO_STATE_BY_THIS_ID =
             "No state by this id";
+
+    public static final String ADDRESS_CANNOT_BE_EMPTY =
+    "Address id can not be empty";
+
+    public static final String NO_ADDRESS_BY_THIS_ID =
+    "No address by this id";
+
+    public static final String CUSTOMER_NOT_AUTHORIZED_TO_UPDATE =
+    "You are not authorized to view/update/delete any one else's address";
 }

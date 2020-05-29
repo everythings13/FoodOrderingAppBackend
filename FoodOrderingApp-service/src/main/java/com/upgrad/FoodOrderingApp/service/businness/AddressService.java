@@ -137,4 +137,30 @@ public class AddressService {
             throw new AuthorizationFailedException(ATHR_003, SESSION_IS_EXPIRED);
         }
     }
+
+    public AddressEntity deleteAddress(String accessToken, String addressId) throws AuthorizationFailedException, AddressNotFoundException {
+        validateCustomerAuthEntity(accessToken);
+        if(addressId.isEmpty())
+        {
+            throw new AddressNotFoundException(ANF_005,ADDRESS_CANNOT_BE_EMPTY);
+        }
+
+        AddressEntity addressEntity = addressDao.getAddressById(addressId);
+        if(addressEntity == null)
+        {
+            throw new AddressNotFoundException(ANF_003,NO_ADDRESS_BY_THIS_ID);
+        }
+
+        CustomerEntity addressCustomerEntity = customerAddressDao.getCustomerByAddress(addressEntity);
+        CustomerEntity loggedInCustomerEntity = customerAuthDao.getCustomerAuthEntityByAccessToken(accessToken).getCustomerEntity();
+
+        if(!addressCustomerEntity.equals(loggedInCustomerEntity))
+        {
+            throw new AuthorizationFailedException(ATHR_004,CUSTOMER_NOT_AUTHORIZED_TO_UPDATE);
+        }
+
+        addressDao.deleteAddress(addressEntity);
+
+        return addressEntity;
+    }
 }
