@@ -7,6 +7,7 @@ import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -80,9 +81,24 @@ public class CustomerController {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/customer", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateCustomer(@RequestBody UpdateCustomerRequest updateCustomerRequest, @RequestHeader
-    ("Authorization") String authorization)
-    {
+    ("Authorization") String authorization) throws AuthorizationFailedException, UpdateCustomerException, AuthenticationFailedException {
+       /*To create authorization header missing exception  for this*/
+        if(authorization == null || authorization.isEmpty())
+        {
+            throw new AuthenticationFailedException("ATH-005", "Authorizarion Header Missing");
+        }
+        if(!authorization.contains("Bearer"))
+        {
+            throw new AuthorizationFailedException("ATH-004","Invalid token.");
+        }
         String token = authorization.split("Bearer ")[1];
+
+        if(token == null || token.isEmpty())
+            throw new AuthorizationFailedException("ATH-004","Invalid token.");
+        if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().isEmpty())
+        {
+            throw new UpdateCustomerException("UCR-002","First name field should not be empty");
+        }
         CustomerEntity customerEntity = customerService.updateCustomer(token, updateCustomerRequest.getFirstName(), updateCustomerRequest.getLastName());
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse().id(customerEntity.getUuid()).firstName(customerEntity.getFirstname()).lastName(customerEntity.getLastname()).
                 status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
@@ -92,8 +108,7 @@ public class CustomerController {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/customer/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdatePasswordResponse> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @RequestHeader
-            ("Authorization") String authorization)
-    {
+            ("Authorization") String authorization) throws AuthorizationFailedException, UpdateCustomerException {
         String token = authorization.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.updatePassword(token, updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
 
@@ -102,4 +117,3 @@ public class CustomerController {
 
     }
 }
-//Controller->service-> Dao
