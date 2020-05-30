@@ -17,11 +17,13 @@ public class OrderBusinessService {
 
   public OrderCouponEntity getCouponDetails(String couponName, String accessToken)
       throws CouponNotFoundException, AuthorizationFailedException {
-    //validateCustomerAuth(accessToken);
+    // validateCustomerAuth(accessToken);
     ValidateCoupon(couponName);
     try {
       OrderCouponEntity orderCoupon = orderCouponDao.getOrderDetails(couponName);
-
+      if (orderCoupon == null) {
+        throw new CouponNotFoundException("CPF-001", "No coupon by this name");
+      }
       return orderCoupon;
     } catch (NoResultException ex) {
       return null;
@@ -36,22 +38,22 @@ public class OrderBusinessService {
     return orderCouponDetails;
   }
 
-
-
-  public OrderCouponEntity getCouponDetailsById(Integer id)  {
+  public OrderCouponEntity getCouponDetailsById(Integer id) {
     OrderCouponEntity orderCouponDetails = orderCouponDao.getCouponDetailsById(id);
     return orderCouponDetails;
   }
 
-  public OrderListPayment getPaymentDetailsById(Integer id){
+  public OrderListPayment getPaymentDetailsById(Integer id) {
     OrderListPayment paymentDetails = orderCouponDao.getPaymentById(id);
     return paymentDetails;
   }
-  public CustomerEntity getCustomerById(Integer id){
+
+  public CustomerEntity getCustomerById(Integer id) {
     CustomerEntity customerDeatils = orderCouponDao.getCustomerById(id);
     return customerDeatils;
   }
-  public AddressEntity getAddressDetailsById(Integer id){
+
+  public AddressEntity getAddressDetailsById(Integer id) {
     AddressEntity addressDetails = orderCouponDao.getAddressById(id);
     return addressDetails;
   }

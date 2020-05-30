@@ -20,6 +20,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @Author : Harika Etamukkala
+ * OrderController
+ * */
 @RestController
 public class OrderController {
   @Autowired private OrderBusinessService orderCouponBusinessService;
@@ -29,15 +33,8 @@ public class OrderController {
       @PathVariable("coupon_name") String couponName,
       @RequestHeader("authorization") final String accessToken)
       throws CouponNotFoundException, AuthorizationFailedException {
-    OrderCouponEntity couponCodeDetails =
-        orderCouponBusinessService.getCouponDetails(couponName, accessToken);
-    if (couponCodeDetails == null) {
-      throw new CouponNotFoundException("CPF-001", "No coupon by this name");
-    }
-    OrderListCoupon couponResponse = new OrderListCoupon();
-    // couponResponse.setId(UUID.fromString(couponCodeDetails.getUuid()));
-    couponResponse.setCouponName(couponCodeDetails.getCouponName());
-    couponResponse.setPercent(couponCodeDetails.getPercent());
+    //getting coupon details
+    OrderListCoupon couponResponse = getOrderCouponResponse(couponName, accessToken);
     ResponseEntity<OrderListCoupon> response = new ResponseEntity<>(couponResponse, HttpStatus.OK);
     return response;
   }
@@ -45,54 +42,10 @@ public class OrderController {
   @RequestMapping(method = RequestMethod.GET, path = "/order")
   public ResponseEntity<List<OrderList>> getAllOrder(
       @RequestHeader("authorization") final String accessToken)
-      throws AuthorizationFailedException,CouponNotFoundException {
+      throws AuthorizationFailedException, CouponNotFoundException {
     List<OrderListEntity> orderList = orderCouponBusinessService.getAllOrders(accessToken);
     List<OrderList> response = convertToResponse(orderList);
-
-
     return new ResponseEntity<List<OrderList>>(response, HttpStatus.OK);
-  }
-
-  private List<OrderList> convertToResponse(List<OrderListEntity> orderList) {
-    List<OrderList> response = new ArrayList<>();
-    orderList.stream()
-        .forEach(
-            order -> {
-              OrderList orderModel = new OrderList();
-              orderModel.setId(order.getUuid());
-              orderModel.setBill(order.getBill());
-              orderModel.setDate(order.getDate().toString());
-              orderModel.setDiscount(order.getDiscount());
-              OrderCouponEntity couponEntity =
-                  orderCouponBusinessService.getCouponDetailsById(order.getCouponId());
-              OrderListCoupon coupon = new OrderListCoupon();
-              BeanUtils.copyProperties(couponEntity, coupon);
-              coupon.setId(UUID.fromString(couponEntity.getUuid()));
-              OrderListAddress addressList = new OrderListAddress();
-              AddressEntity addressEntity =
-                  orderCouponBusinessService.getAddressDetailsById(order.getAddressId());
-              BeanUtils.copyProperties(addressEntity, addressList);
-              addressList.setId(UUID.fromString(addressEntity.getUuid()));
-              OrderListPayment payment = new OrderListPayment();
-              com.upgrad.FoodOrderingApp.service.entity.OrderListPayment paymentEntity =
-                  orderCouponBusinessService.getPaymentDetailsById(order.getPaymentId());
-              if (paymentEntity != null) {
-                BeanUtils.copyProperties(paymentEntity, payment);
-                payment.setId(UUID.fromString(paymentEntity.getUuid()));
-                orderModel.setPayment(payment);
-              }
-              OrderListCustomer customer = new OrderListCustomer();
-              CustomerEntity customerEntity =
-                  orderCouponBusinessService.getCustomerById(order.getCustomerId());
-              BeanUtils.copyProperties(customerEntity, customer);
-              customer.setId(UUID.fromString(couponEntity.getUuid()));
-              orderModel.setCoupon(coupon);
-              orderModel.setCustomer(customer);
-
-              orderModel.setAddress(addressList);
-              response.add(orderModel);
-            });
-    return response;
   }
 
   @RequestMapping(
@@ -105,6 +58,14 @@ public class OrderController {
       @RequestHeader("authorization") final String accessToken)
       throws CouponNotFoundException, PaymentMethodNotFoundException, AuthorizationFailedException,
           RestaurantNotFoundException, AddressNotFoundException {
+    OrderListEntity order = getOrderListEntity(orderRequest);
+    long orderId = orderCouponBusinessService.saveOrder(order, accessToken);
+    SaveAddressResponse response =
+        new SaveAddressResponse().id(String.valueOf(orderId)).status("ORDER SUCCESSFULLY PLACED");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  private OrderListEntity getOrderListEntity(@RequestBody(required = true) SaveOrderRequest orderRequest) {
     OrderListEntity order = new OrderListEntity();
     order.setBill(orderRequest.getBill());
     order.setUuid(UUID.randomUUID());
@@ -114,9 +75,60 @@ public class OrderController {
     order.setCoupon(orderRequest.getCouponId().toString());
     order.setPayment(orderRequest.getPaymentId().toString());
     order.setRestaurant(orderRequest.getRestaurantId().toString());
-    long orderId = orderCouponBusinessService.saveOrder(order, accessToken);
-    SaveAddressResponse response =
-        new SaveAddressResponse().id(String.valueOf(orderId)).status("ORDER SUCCESSFULLY PLACED");
-    return new ResponseEntity<>(response, HttpStatus.OK);
+    return order;
+  }
+
+  private OrderListCoupon getOrderCouponResponse(
+      @PathVariable("coupon_name") String couponName,
+      @RequestHeader("authorization") String accessToken)
+      throws CouponNotFoundException, AuthorizationFailedException {
+    OrderCouponEntity couponCodeDetails =
+        orderCouponBusinessService.getCouponDetails(couponName, accessToken);
+    OrderListCoupon couponResponse = new OrderListCoupon();
+    couponResponse.setId(UUID.fromString(couponCodeDetails.getUuid()));
+    couponResponse.setCouponName(couponCodeDetails.getCouponName());
+    couponResponse.setPercent(couponCodeDetails.getPercent());
+    return couponResponse;
+  }
+  private List<OrderList> convertToResponse(List<OrderListEntity> orderList) {
+    List<OrderList> response = new ArrayList<>();
+    orderList.stream()
+            .forEach(
+                    order -> {
+                      OrderList orderModel = new OrderList();
+                      orderModel.setId(order.getUuid());
+                      orderModel.setBill(order.getBill());
+                      orderModel.setDate(order.getDate().toString());
+                      orderModel.setDiscount(order.getDiscount());
+                      OrderCouponEntity couponEntity =
+                              orderCouponBusinessService.getCouponDetailsById(order.getCouponId());
+                      OrderListCoupon coupon = new OrderListCoupon();
+                      BeanUtils.copyProperties(couponEntity, coupon);
+                      coupon.setId(UUID.fromString(couponEntity.getUuid()));
+                      OrderListAddress addressList = new OrderListAddress();
+                      AddressEntity addressEntity =
+                              orderCouponBusinessService.getAddressDetailsById(order.getAddressId());
+                      BeanUtils.copyProperties(addressEntity, addressList);
+                      addressList.setId(UUID.fromString(addressEntity.getUuid()));
+                      OrderListPayment payment = new OrderListPayment();
+                      com.upgrad.FoodOrderingApp.service.entity.OrderListPayment paymentEntity =
+                              orderCouponBusinessService.getPaymentDetailsById(order.getPaymentId());
+                      if (paymentEntity != null) {
+                        BeanUtils.copyProperties(paymentEntity, payment);
+                        payment.setId(UUID.fromString(paymentEntity.getUuid()));
+                        orderModel.setPayment(payment);
+                      }
+                      OrderListCustomer customer = new OrderListCustomer();
+                      CustomerEntity customerEntity =
+                              orderCouponBusinessService.getCustomerById(order.getCustomerId());
+                      BeanUtils.copyProperties(customerEntity, customer);
+                      customer.setId(UUID.fromString(couponEntity.getUuid()));
+                      orderModel.setCoupon(coupon);
+                      orderModel.setCustomer(customer);
+
+                      orderModel.setAddress(addressList);
+                      response.add(orderModel);
+                    });
+    return response;
   }
 }
