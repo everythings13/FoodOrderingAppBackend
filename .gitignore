@@ -1,12 +1,5 @@
 .idea
-*.class
-*.jar
-*.lst
-*.sql
-*.properties
-
 FoodOrderingApp-api/target
 FoodOrderingApp-db/target
 FoodOrderingApp-service/target
-FoodOrderingApp-api/src/main/resources/
-*.yaml
+
