@@ -6,6 +6,16 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
+@NamedQueries({
+        @NamedQuery(
+                name = "getCustomerByUUId",
+                query = "Select c from CustomerEntity c where c.uuid = :uuid"
+        ),
+        @NamedQuery(
+                name = "getCustomerById",
+                query = "Select c from CustomerEntity c where c.id = :id"
+        )}
+)
 public class CustomerEntity {
 
     @Id
@@ -34,6 +44,8 @@ public class CustomerEntity {
 
     @Column(name = "salt")
     private String salt;
+
+
 
     public Integer getId() {
         return id;
@@ -98,6 +110,8 @@ public class CustomerEntity {
     public void setSalt(String salt) {
         this.salt = salt;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

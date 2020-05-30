@@ -7,26 +7,30 @@ import java.util.UUID;
 @Table(name = "Coupon")
 @NamedQueries({
         @NamedQuery(name="getCouponDetails",query = "SELECT o FROM OrderCouponEntity o WHERE o.couponName =:couponName"),
+        @NamedQuery(name="getCouponDetailsByUUId",query = "SELECT o FROM OrderCouponEntity o WHERE o.uuid =:uuid"),
         @NamedQuery(name="getCouponDetailsById",query = "SELECT o FROM OrderCouponEntity o WHERE o.id =:id")
 })
 public class OrderCouponEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "uuid")
-    private UUID uuid;
+    private String uuid;
     @Column(name = "coupon_name")
     private String couponName ;
     @Column(name = "percent")
     private Integer percent ;
 
+/*    @OneToOne(mappedBy = "coupon",cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private OrderListEntity order;*/
 
-    public BigInteger getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -46,14 +50,20 @@ public class OrderCouponEntity {
         this.percent = percent;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+/*
+    public OrderListEntity getOrder() {
+        return order;
+    }
 
-
+    public void setOrder(OrderListEntity order) {
+        this.order = order;
+    }*/
 }
 

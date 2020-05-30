@@ -1,19 +1,24 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.upgrad.FoodOrderingApp.api.model.OrderList;
-import com.upgrad.FoodOrderingApp.api.model.OrderListCoupon;
-import com.upgrad.FoodOrderingApp.api.model.SaveAddressResponse;
-import com.upgrad.FoodOrderingApp.api.model.SaveOrderRequest;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.OrderBusinessService;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderCouponEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderListEntity;
-import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
-import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class OrderController {
@@ -30,7 +35,7 @@ public class OrderController {
       throw new CouponNotFoundException("CPF-001", "No coupon by this name");
     }
     OrderListCoupon couponResponse = new OrderListCoupon();
-    couponResponse.setId(couponCodeDetails.getUuid());
+    // couponResponse.setId(UUID.fromString(couponCodeDetails.getUuid()));
     couponResponse.setCouponName(couponCodeDetails.getCouponName());
     couponResponse.setPercent(couponCodeDetails.getPercent());
     ResponseEntity<OrderListCoupon> response = new ResponseEntity<>(couponResponse, HttpStatus.OK);
@@ -38,10 +43,56 @@ public class OrderController {
   }
 
   @RequestMapping(method = RequestMethod.GET, path = "/order")
-  public ResponseEntity<OrderList> getAllOrder(
-      @RequestHeader("authorization") final String accessToken) {
+  public ResponseEntity<List<OrderList>> getAllOrder(
+      @RequestHeader("authorization") final String accessToken)
+      throws AuthorizationFailedException,CouponNotFoundException {
+    List<OrderListEntity> orderList = orderCouponBusinessService.getAllOrders(accessToken);
+    List<OrderList> response = convertToResponse(orderList);
 
-    return null;
+
+    return new ResponseEntity<List<OrderList>>(response, HttpStatus.OK);
+  }
+
+  private List<OrderList> convertToResponse(List<OrderListEntity> orderList) {
+    List<OrderList> response = new ArrayList<>();
+    orderList.stream()
+        .forEach(
+            order -> {
+              OrderList orderModel = new OrderList();
+              orderModel.setId(order.getUuid());
+              orderModel.setBill(order.getBill());
+              orderModel.setDate(order.getDate().toString());
+              orderModel.setDiscount(order.getDiscount());
+              OrderCouponEntity couponEntity =
+                  orderCouponBusinessService.getCouponDetailsById(order.getCouponId());
+              OrderListCoupon coupon = new OrderListCoupon();
+              BeanUtils.copyProperties(couponEntity, coupon);
+              coupon.setId(UUID.fromString(couponEntity.getUuid()));
+              OrderListAddress addressList = new OrderListAddress();
+              AddressEntity addressEntity =
+                  orderCouponBusinessService.getAddressDetailsById(order.getAddressId());
+              BeanUtils.copyProperties(addressEntity, addressList);
+              addressList.setId(UUID.fromString(addressEntity.getUuid()));
+              OrderListPayment payment = new OrderListPayment();
+              com.upgrad.FoodOrderingApp.service.entity.OrderListPayment paymentEntity =
+                  orderCouponBusinessService.getPaymentDetailsById(order.getPaymentId());
+              if (paymentEntity != null) {
+                BeanUtils.copyProperties(paymentEntity, payment);
+                payment.setId(UUID.fromString(paymentEntity.getUuid()));
+                orderModel.setPayment(payment);
+              }
+              OrderListCustomer customer = new OrderListCustomer();
+              CustomerEntity customerEntity =
+                  orderCouponBusinessService.getCustomerById(order.getCustomerId());
+              BeanUtils.copyProperties(customerEntity, customer);
+              customer.setId(UUID.fromString(couponEntity.getUuid()));
+              orderModel.setCoupon(coupon);
+              orderModel.setCustomer(customer);
+
+              orderModel.setAddress(addressList);
+              response.add(orderModel);
+            });
+    return response;
   }
 
   @RequestMapping(
@@ -49,21 +100,21 @@ public class OrderController {
       path = "/order",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity save(@RequestBody(required = true) SaveOrderRequest orderRequest)
-      throws CouponNotFoundException {
+  public ResponseEntity save(
+      @RequestBody(required = true) SaveOrderRequest orderRequest,
+      @RequestHeader("authorization") final String accessToken)
+      throws CouponNotFoundException, PaymentMethodNotFoundException, AuthorizationFailedException,
+          RestaurantNotFoundException, AddressNotFoundException {
     OrderListEntity order = new OrderListEntity();
-    OrderCouponEntity couponDetails =
-        orderCouponBusinessService.getCouponDetailsByUUid(orderRequest.getCouponId());
-    if (couponDetails == null) {
-      throw new CouponNotFoundException("CPF-002", "No coupon by this id");
-    }
     order.setBill(orderRequest.getBill());
-    order.setAddressId(orderRequest.getAddressId());
-    order.setCouponId(orderRequest.getCouponId().toString());
-    order.setPaymentId(orderRequest.getPaymentId().toString());
-    order.setRestaurantId(orderRequest.getRestaurantId().toString());
-
-    long orderId = orderCouponBusinessService.saveOrder(order);
+    order.setUuid(UUID.randomUUID());
+    order.setDiscount(orderRequest.getDiscount());
+    order.setDate(new Timestamp(new Date().getTime()));
+    order.setAddress(orderRequest.getAddressId());
+    order.setCoupon(orderRequest.getCouponId().toString());
+    order.setPayment(orderRequest.getPaymentId().toString());
+    order.setRestaurant(orderRequest.getRestaurantId().toString());
+    long orderId = orderCouponBusinessService.saveOrder(order, accessToken);
     SaveAddressResponse response =
         new SaveAddressResponse().id(String.valueOf(orderId)).status("ORDER SUCCESSFULLY PLACED");
     return new ResponseEntity<>(response, HttpStatus.OK);
