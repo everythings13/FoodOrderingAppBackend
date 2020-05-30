@@ -10,12 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class OrderCouponBusinessService {
+public class OrderBusinessService {
 
     @Autowired
     private OrderCouponDao orderCouponDao;
 
     public OrderCouponEntity getCouponDetails(String couponName) throws CouponNotFoundException {
+
+        if(couponName==null){
+            throw  new CouponNotFoundException("CPF-002","Coupon name field should not be empty");
+        }
        OrderCouponEntity orderCoupon= orderCouponDao.getOrderDetails(couponName);
        if (orderCoupon==null){
             throw  new CouponNotFoundException("CPF-001","No coupon by this name");
@@ -23,8 +27,8 @@ public class OrderCouponBusinessService {
         return orderCoupon;
     }
 
-   public OrderCouponEntity getCouponDetailsByUUid(UUID couponId) throws CouponNotFoundException {
-       OrderCouponEntity orderCouponDetails=orderCouponDao.getOrderDetailsById(couponId);
+   public OrderCouponEntity getCouponDetailsByUUid(UUID uuid) throws CouponNotFoundException {
+       OrderCouponEntity orderCouponDetails=orderCouponDao.getOrderDetailsById(uuid);
        if(orderCouponDetails==null){
            throw new CouponNotFoundException("CPF-002","No Coupon By this Id");
        }
