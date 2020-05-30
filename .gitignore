@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .idea/workspace.xml
 *.class
 *.jar
@@ -8,3 +9,6 @@
 FoodOrderingApp-api/target
 FoodOrderingApp-api/src/main/resources/
 *.yaml
+=======
+.idea
+>>>>>>> feature/addressController
