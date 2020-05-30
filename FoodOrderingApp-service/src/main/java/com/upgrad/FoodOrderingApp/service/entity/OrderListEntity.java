@@ -2,63 +2,112 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
 @NamedQueries({
-        @NamedQuery(name = "getAllOrders" ,query = "SELECT * FROM OrderListEntity ORDER BY date desc ")
+  @NamedQuery(
+      name = "getAllOrdersByCustomerId",
+      query = "SELECT o FROM OrderListEntity o WHERE o.customerId =:customerId ORDER BY date desc ")
 })
 public class OrderListEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(name = "bill")
-    private BigDecimal bill;
-    @Column(name="coupon_id")
-    private OrderCouponEntity coupon;
-    @Column(name = "discount")
-    private long discount;
-    @Column(name = "date")
-    private String date;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    public long getId() {
-        return id;
-    }
+  @Column(name = "bill")
+  private BigDecimal bill;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  @Column(name = "discount")
+  private long discount;
 
-    public BigDecimal getBill() {
-        return bill;
-    }
+  @Column(name = "date")
+  private String date;
 
-    public void setBill(BigDecimal bill) {
-        this.bill = bill;
-    }
+  @Column(name = "payment_id")
+  private String paymentId;
 
-    public OrderCouponEntity getCoupon() {
-        return coupon;
-    }
+  @Column(name = "address_id")
+  private String addressId;
 
-    public void setCoupon(OrderCouponEntity coupon) {
-        this.coupon = coupon;
-    }
+  @Column(name = "restaurant_id")
+  private String restaurantId;
 
-    public long getDiscount() {
-        return discount;
-    }
+  @Column(name = "coupon_id")
+  private String couponId;
 
-    public void setDiscount(long discount) {
-        this.discount = discount;
-    }
+  @Column(name = "customer_id")
+  private String customerId;
 
-    public String getDate() {
-        return date;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public BigDecimal getBill() {
+    return bill;
+  }
+
+  public void setBill(BigDecimal bill) {
+    this.bill = bill;
+  }
+
+  public long getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(long discount) {
+    this.discount = discount;
+  }
+
+  public String getDate() {
+    return date;
+  }
+
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  public String getPaymentId() {
+    return paymentId;
+  }
+
+  public void setPaymentId(String paymentId) {
+    this.paymentId = paymentId;
+  }
+
+  public String getAddressId() {
+    return addressId;
+  }
+
+  public void setAddressId(String addressId) {
+    this.addressId = addressId;
+  }
+
+  public String getRestaurantId() {
+    return restaurantId;
+  }
+
+  public void setRestaurantId(String restaurantId) {
+    this.restaurantId = restaurantId;
+  }
+
+  public String getCouponId() {
+    return couponId;
+  }
+
+  public void setCouponId(String couponId) {
+    this.couponId = couponId;
+  }
+
+  public String getCustomerId() {
+    return customerId;
+  }
+
+  public void setCustomerId(String customerId) {
+    this.customerId = customerId;
+  }
 }

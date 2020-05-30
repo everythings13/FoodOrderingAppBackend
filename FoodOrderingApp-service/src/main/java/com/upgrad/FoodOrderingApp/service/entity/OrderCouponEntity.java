@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.UUID;
 @Entity
 @Table(name = "Coupon")
@@ -12,17 +13,20 @@ public class OrderCouponEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private BigInteger id;
+    @Column(name = "uuid")
+    private UUID uuid;
     @Column(name = "coupon_name")
     private String couponName ;
     @Column(name = "percent")
     private Integer percent ;
 
-    public UUID getId() {
+
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
@@ -41,5 +45,15 @@ public class OrderCouponEntity {
     public void setPercent(Integer percent) {
         this.percent = percent;
     }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+
 }
 
