@@ -60,6 +60,6 @@ public class RestExceptionHandler {
             InvalidRatingException exc) {
         return new ResponseEntity<>(
                 new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
-                HttpStatus.FORBIDDEN);
+                HttpStatus.BAD_REQUEST);
     }
 }

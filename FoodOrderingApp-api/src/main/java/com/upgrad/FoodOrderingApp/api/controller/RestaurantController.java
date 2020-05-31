@@ -4,7 +4,6 @@ import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponse;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantUpdatedResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
-import com.upgrad.FoodOrderingApp.service.businness.RestaurantCategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.entity.Category;
 import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
@@ -33,16 +32,12 @@ public class RestaurantController {
 
   private static final String EMPTY_STRING_AS_JSON = "\"\"";
   private final RestaurantService restaurantService;
-  private final RestaurantCategoryService restaurantCategoryService;
   private final CategoryService categoryService;
 
   @Autowired
   public RestaurantController(
-      RestaurantService restaurantService,
-      RestaurantCategoryService restaurantCategoryService,
-      CategoryService categoryService) {
+      RestaurantService restaurantService, CategoryService categoryService) {
     this.restaurantService = restaurantService;
-    this.restaurantCategoryService = restaurantCategoryService;
     this.categoryService = categoryService;
   }
 
@@ -120,7 +115,7 @@ public class RestaurantController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<RestaurantUpdatedResponse> updateCustomerRating(
       @RequestHeader("authorization") final String authorization,
-      @RequestParam Double customerRating,
+      @RequestParam("customer_rating") Double customerRating,
       @PathVariable String restaurant_id)
       throws AuthorizationFailedException, InvalidRatingException, RestaurantNotFoundException {
     String[] bearerToken = authorization.split("Bearer ");
