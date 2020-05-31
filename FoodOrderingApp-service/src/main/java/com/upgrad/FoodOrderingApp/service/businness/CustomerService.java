@@ -118,6 +118,7 @@ public class CustomerService {
     return customerDao.updateCustomerPassword(customerEntity);
   }
 
+  /** @return fetches CustomerEntity after validating */
   public CustomerEntity getCustomer(String token) throws AuthorizationFailedException {
     CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
     if (customerAuthEntity == null) {

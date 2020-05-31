@@ -12,6 +12,7 @@ public class PaymentService {
 
   @Autowired private PaymentDao paymentDao;
 
+  /** @return list of all payment methods */
   public List<PaymentEntity> getAllPaymentMethods() {
     return paymentDao.getAllPaymentMethods();
   }
