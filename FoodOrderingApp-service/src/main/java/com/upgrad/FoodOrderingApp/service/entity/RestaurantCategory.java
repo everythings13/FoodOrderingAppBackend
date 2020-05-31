@@ -7,11 +7,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "restaurant_category")
-//@NamedQueries({
-//  @NamedQuery(
-//      name = "getCategoriesByRestaurantId",
-//      query = "SELECT a FROM RestaurantCategory a WHERE a.restaurant =:restaurant")
-//})
+@NamedQueries({
+  @NamedQuery(
+      name = "restaurantsByCategoryId",
+      query = "select r from RestaurantCategory r where r.category.id=:id")
+})
 public class RestaurantCategory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

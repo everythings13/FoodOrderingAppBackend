@@ -15,8 +15,8 @@ public class CategoryService {
     this.categoryDao = categoryDao;
   }
 
-//  /** @return list of category Ids per restaurant id */
-//  public String getCategoryNameByCategoryId(int id) {
-//    return categoryDao.getCategoryByCategoryId(id).getCategoryName();
-//  }
+  /** @return get category by category uuid */
+  public Category getCategoryNameByCategoryUuid(String categoryId) {
+    return categoryDao.getCategoryByCategoryUuid(categoryId);
+  }
 }

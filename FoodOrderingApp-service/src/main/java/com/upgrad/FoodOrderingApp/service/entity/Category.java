@@ -3,16 +3,15 @@ package com.upgrad.FoodOrderingApp.service.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "category")
-//@NamedQueries({
-//  @NamedQuery(
-//      name = "getCategoryAttributesById",
-//      query = "SELECT a FROM Category a WHERE a.id =:id"),
-//})
+@NamedQueries({
+  @NamedQuery(
+      name = "getCategoryAttributesByUuid",
+      query = "SELECT c FROM Category c WHERE c.uuid =:uuid"),
+})
 public class Category {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

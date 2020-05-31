@@ -62,7 +62,7 @@ public class RestaurantControllerReponseUtil {
     //        List<RestaurantCategory> categoriesByRestaurantId =
     //            restaurantCategoryService.getCategoriesByRestaurantId(restaurant.getId());
     //        return categoriesByRestaurantId.stream()
-    //            .map(category -> categoryService.getCategoryNameByCategoryId(category.getId()))
+    //            .map(category -> categoryService.getCategoryNameByCategoryUuid(category.getId()))
     //            .collect(Collectors.toList());
     return restaurant.getCategories().stream()
         .map(Category::getCategoryName)
