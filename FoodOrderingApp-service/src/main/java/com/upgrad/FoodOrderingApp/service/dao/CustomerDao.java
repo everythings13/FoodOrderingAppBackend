@@ -12,7 +12,7 @@ public class CustomerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CustomerEntity createCustomer(CustomerEntity customerEntity){
+    public CustomerEntity saveCustomer(CustomerEntity customerEntity){
         entityManager.persist(customerEntity);
         return customerEntity;
     }
@@ -47,7 +47,7 @@ public class CustomerDao {
         }
     }
 
-    public CustomerAuthEntity login (CustomerAuthEntity customerAuthEntity)
+    public CustomerAuthEntity authenticate (CustomerAuthEntity customerAuthEntity)
     {
         entityManager.persist(customerAuthEntity);
         return customerAuthEntity;
@@ -66,7 +66,7 @@ public class CustomerDao {
     }
 
     /* Update Password*/
-    public CustomerEntity updatePassword(CustomerEntity customerEntity){
+    public CustomerEntity updateCustomerPassword(CustomerEntity customerEntity){
         entityManager.merge(customerEntity);
         return customerEntity;
     }

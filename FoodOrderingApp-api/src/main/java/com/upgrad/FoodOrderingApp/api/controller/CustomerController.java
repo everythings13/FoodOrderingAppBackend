@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 import java.util.UUID;
+import com.upgrad.FoodOrderingApp.service.util.CommonUtil;
+import static com.upgrad.FoodOrderingApp.service.util.MessageKeys.*;
 
 @RestController
 public class CustomerController {
@@ -25,7 +27,7 @@ public class CustomerController {
     CustomerService customerService;
 
     @RequestMapping(method = RequestMethod.POST,path = "/customer/signup", consumes= MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignupCustomerResponse> signUpUser(@RequestBody SignupCustomerRequest signUpCustomerRequest) throws SignUpRestrictedException
+    public ResponseEntity<SignupCustomerResponse> saveCustomer(@RequestBody SignupCustomerRequest signUpCustomerRequest) throws SignUpRestrictedException
     {
         CustomerEntity customerEntity =new CustomerEntity();
         customerEntity.setUuid(UUID.randomUUID().toString());
@@ -35,23 +37,19 @@ public class CustomerController {
         customerEntity.setEmail(signUpCustomerRequest.getEmailAddress());
         customerEntity.setLastname(signUpCustomerRequest.getLastName());
         customerEntity.setSalt("1234abc");
-        CustomerEntity createdCustomerEntity= customerService.createCustomer(customerEntity);
+        CustomerEntity createdCustomerEntity= customerService.saveCustomer(customerEntity);
         SignupCustomerResponse signupUserResponse=new SignupCustomerResponse().id(createdCustomerEntity.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SignupCustomerResponse>(signupUserResponse, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/customer/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LoginResponse> login(@RequestHeader("Authorization") String authorization) throws AuthenticationFailedException
+    public ResponseEntity<LoginResponse> authenticate(@RequestHeader("Authorization") String authorization) throws AuthenticationFailedException
     {
-        if(!authorization.contains("Basic"))
+        if(!CommonUtil.basicAuthHeaderCheck(authorization))
         {
-            throw new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password!");
+            throw new AuthenticationFailedException(ATH_003,INCORRECT_FORMAT_DECODED_CREDENTIALS);
         }
         String[] credentials= new String(Base64.getDecoder().decode(authorization.split("Basic ")[1])).split(":");
-        if(credentials.length == 0)
-        {
-            throw new AuthenticationFailedException("ATH-003","Incorrect format of decoded customer name and password!");
-        }
         CustomerAuthEntity customerAuthEntity=customerService.authenticate(credentials[0],credentials[1]);
         LoginResponse loginResponse=new LoginResponse().id(customerAuthEntity.getUuid()).message("LOGGED IN SUCCESSFULLY");
         loginResponse.setFirstName(customerAuthEntity.getCustomer().getFirstname());
@@ -65,11 +63,11 @@ public class CustomerController {
 
 
     @RequestMapping(method = RequestMethod.POST, path =  "/customer/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LogoutResponse> logout(@RequestHeader("Authorization") String authorization) throws AuthorizationFailedException
+    public ResponseEntity<LogoutResponse> logout(@RequestHeader("Authorization") String authorization) throws AuthorizationFailedException,AuthenticationFailedException
     {
-        if(!authorization.contains("Bearer"))
+        if(!CommonUtil.tokenHeaderCheck(authorization))
         {
-            throw new AuthorizationFailedException("ATH-004","Invalid token.");
+            throw new AuthenticationFailedException(ATH_004,MISSING_INVALID_TOKEN);
         }
         String token = authorization.split("Bearer")[1];
 
@@ -83,22 +81,15 @@ public class CustomerController {
     public ResponseEntity<UpdateCustomerResponse> updateCustomer(@RequestBody UpdateCustomerRequest updateCustomerRequest, @RequestHeader
     ("Authorization") String authorization) throws AuthorizationFailedException, UpdateCustomerException, AuthenticationFailedException {
        /*To create authorization header missing exception  for this*/
-        if(authorization == null || authorization.isEmpty())
+        if(!CommonUtil.tokenHeaderCheck(authorization))
         {
-            throw new AuthenticationFailedException("ATH-005", "Authorizarion Header Missing");
+            throw new AuthenticationFailedException(ATH_004,MISSING_INVALID_TOKEN);
         }
-        if(!authorization.contains("Bearer"))
+        if(CommonUtil.isNullOrEmpty(updateCustomerRequest.getFirstName()))
         {
-            throw new AuthorizationFailedException("ATH-004","Invalid token.");
+            throw new UpdateCustomerException(UCR_002,FIRST_NAME_SHOULD_NOT_BE_EMPTY);
         }
         String token = authorization.split("Bearer ")[1];
-
-        if(token == null || token.isEmpty())
-            throw new AuthorizationFailedException("ATH-004","Invalid token.");
-        if(updateCustomerRequest.getFirstName()==null || updateCustomerRequest.getFirstName().isEmpty())
-        {
-            throw new UpdateCustomerException("UCR-002","First name field should not be empty");
-        }
         CustomerEntity customerEntity = customerService.updateCustomer(token, updateCustomerRequest.getFirstName(), updateCustomerRequest.getLastName());
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse().id(customerEntity.getUuid()).firstName(customerEntity.getFirstname()).lastName(customerEntity.getLastname()).
                 status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
@@ -107,10 +98,14 @@ public class CustomerController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/customer/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdatePasswordResponse> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @RequestHeader
-            ("Authorization") String authorization) throws AuthorizationFailedException, UpdateCustomerException {
+    public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @RequestHeader
+            ("Authorization") String authorization) throws AuthorizationFailedException, UpdateCustomerException, AuthenticationFailedException {
+        if(!CommonUtil.tokenHeaderCheck(authorization))
+        {
+            throw new AuthenticationFailedException(ATH_004,MISSING_INVALID_TOKEN);
+        }
         String token = authorization.split("Bearer ")[1];
-        CustomerEntity customerEntity = customerService.updatePassword(token, updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
+        CustomerEntity customerEntity = customerService.updateCustomerPassword(token, updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
 
         UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse().id(customerEntity.getUuid()).status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
         return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse,HttpStatus.OK);
