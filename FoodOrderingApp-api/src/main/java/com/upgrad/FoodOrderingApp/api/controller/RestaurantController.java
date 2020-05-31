@@ -49,7 +49,7 @@ public class RestaurantController {
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       path = "/restaurant/name/{restaurant_name}")
-  public ResponseEntity<RestaurantListResponse> getListOfRestaurants(
+  public ResponseEntity<RestaurantListResponse> getListOfRestaurantsByName(
       @PathVariable String restaurant_name) throws RestaurantNotFoundException {
     if (Strings.isNullOrEmpty(restaurant_name)
         || restaurant_name.equalsIgnoreCase(EMPTY_STRING_AS_JSON)) {
