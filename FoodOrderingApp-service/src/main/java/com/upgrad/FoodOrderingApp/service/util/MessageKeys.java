@@ -36,6 +36,9 @@ public final class MessageKeys {
 
     public static final String THIS_CONTACT_NUMBER_IS_ALREADY_REGISTERED =
             "This contact number is already registered! Try other contact number.";
+    
+    public static final String THIS_CONTACT_NUMBER_IS_NOT_REGISTERED =
+            "This contact number has not been registered!";
 
     public static final String INVALID_EMAILID_FORMAT =
             "Invalid email-id format!";
