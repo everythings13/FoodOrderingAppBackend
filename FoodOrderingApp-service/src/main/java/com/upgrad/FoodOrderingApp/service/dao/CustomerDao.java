@@ -17,14 +17,6 @@ public class CustomerDao {
         return customerEntity;
     }
 
-    public CustomerEntity getCustomerByUUID(final String userUuid) {
-        return entityManager.createNamedQuery("customerByUuid", CustomerEntity.class).setParameter("uuid", userUuid).getSingleResult();
-    }
-
-    public CustomerEntity getCustomerByEmail(final String email) {
-        return entityManager.createNamedQuery("customerByEmail", CustomerEntity.class).setParameter("email", email).getSingleResult();
-    }
-
     public CustomerEntity getCustomerByContactNumber(final String contactnumber) {
         try {
             return entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactnumber", contactnumber).getSingleResult();
@@ -34,10 +26,6 @@ public class CustomerDao {
         }
     }
 
-    public CustomerEntity getCustomer(final Integer id)
-    {
-        return entityManager.createNamedQuery("customerById", CustomerEntity.class).setParameter("id", id).getSingleResult();
-    }
 
     public CustomerAuthEntity getUserByToken(final String token){
         try {

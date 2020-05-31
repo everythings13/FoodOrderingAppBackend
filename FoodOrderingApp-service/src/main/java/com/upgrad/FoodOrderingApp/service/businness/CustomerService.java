@@ -53,7 +53,7 @@ public CustomerEntity saveCustomer(CustomerEntity customerEntity) throws SignUpR
     {
         throw new SignUpRestrictedException(SGR_001, THIS_CONTACT_NUMBER_IS_ALREADY_REGISTERED);
     }
-    String encryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), customerEntity.getPassword());
+    String encryptedPassword = cryptographyProvider.encrypt(customerEntity.getPassword(),customerEntity.getSalt());
     customerEntity.setPassword(encryptedPassword);
     return customerDao.saveCustomer(customerEntity);
 }
@@ -64,7 +64,7 @@ public CustomerAuthEntity authenticate(String contactnumber, String password) th
     CustomerAuthEntity customerAuthToken = new CustomerAuthEntity();
     CustomerEntity customerEntity = customerDao.getCustomerByContactNumber(contactnumber);
     if (customerEntity != null) {
-        String encryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), password);
+        String encryptedPassword = cryptographyProvider.encrypt(password,customerEntity.getSalt());
         if (customerEntity.getPassword().equalsIgnoreCase(encryptedPassword)) {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(customerEntity.getPassword());
             customerAuthToken.setCustomer(customerEntity);
@@ -150,8 +150,8 @@ public CustomerAuthEntity authenticate(String contactnumber, String password) th
         {
             throw new AuthorizationFailedException(ATHR_003,SESSION_IS_EXPIRED);
         }
-        String oldEncryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), old_password);
-        String newEncryptedPassword = cryptographyProvider.encrypt(customerEntity.getSalt(), new_password);
+        String oldEncryptedPassword = cryptographyProvider.encrypt(old_password,customerEntity.getSalt());
+        String newEncryptedPassword = cryptographyProvider.encrypt(new_password,customerEntity.getSalt());
 
         if (!CommonUtil.passwordCheck(new_password))
         {
