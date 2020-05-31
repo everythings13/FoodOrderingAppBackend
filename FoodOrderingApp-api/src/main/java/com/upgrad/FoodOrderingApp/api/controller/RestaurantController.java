@@ -112,28 +112,26 @@ public class RestaurantController {
     return new ResponseEntity<>(
         RestaurantControllerReponseUtil.getRestaurantDetailsResponse(restaurant), HttpStatus.OK);
   }
-//
-//  @RequestMapping(
-//      method = RequestMethod.PUT,
-//      path = "/restaurant/{restaurant_id}",
-//      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-//      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//  public ResponseEntity<RestaurantUpdatedResponse> updateCustomerRating(
-//      @RequestHeader("authorization") final String authorization,
-//      @RequestParam Double customerRating,
-//      @PathVariable String restaurant_id)
-//      throws AuthorizationFailedException, InvalidRatingException, RestaurantNotFoundException {
-//    String[] bearerToken = authorization.split("Bearer ");
-//    Restaurant restaurantEntity =
-//        restaurantService.updateCustomerRating(customerRating, restaurant_id, bearerToken[1]);
-//
-//    // Attach the details to the updateResponse
-//    RestaurantUpdatedResponse restaurantUpdatedResponse =
-//        new RestaurantUpdatedResponse()
-//            .id(UUID.fromString(restaurantEntity.getUuid()))
-//            .status("RESTAURANT RATING UPDATED SUCCESSFULLY");
-//
-//    // Returns the RestaurantUpdatedResponse with OK http status
-//    return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
-//  }
+
+  @RequestMapping(
+      method = RequestMethod.PUT,
+      path = "/{restaurant_id}",
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<RestaurantUpdatedResponse> updateCustomerRating(
+      @RequestHeader("authorization") final String authorization,
+      @RequestParam Double customerRating,
+      @PathVariable String restaurant_id)
+      throws AuthorizationFailedException, InvalidRatingException, RestaurantNotFoundException {
+    String[] bearerToken = authorization.split("Bearer ");
+    Restaurant restaurantEntity =
+        restaurantService.updateCustomerRating(customerRating, restaurant_id, bearerToken[1]);
+
+    RestaurantUpdatedResponse restaurantUpdatedResponse =
+        new RestaurantUpdatedResponse()
+            .id(UUID.fromString(restaurantEntity.getUuid()))
+            .status("RESTAURANT RATING UPDATED SUCCESSFULLY");
+
+    return new ResponseEntity<>(restaurantUpdatedResponse, HttpStatus.OK);
+  }
 }
