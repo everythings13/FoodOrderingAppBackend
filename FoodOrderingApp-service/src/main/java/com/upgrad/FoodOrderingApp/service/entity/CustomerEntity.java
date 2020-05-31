@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
+<<<<<<< HEAD
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -47,6 +48,61 @@ public class CustomerEntity {
 
 
 
+=======
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Entity
+@Table(name ="customer")
+@NamedQueries(
+        {
+            @NamedQuery(name= "customerByUuid", query="select cu from CustomerEntity cu where cu.uuid = :uuid"),
+                @NamedQuery(name= "customerById", query="select cu from CustomerEntity cu where cu.id = :id"),
+                @NamedQuery(name= "customerByEmail", query="select cu from CustomerEntity cu where cu.email = :email"),
+                @NamedQuery(name = "customerByContactNumber", query = "select cu from CustomerEntity cu where cu.contactnumber= :contactnumber")
+
+        }
+)
+public class CustomerEntity {
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "UUID")
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "FIRSTNAME")
+    @NotNull
+    @Size(max = 30)
+    private String firstname;
+
+    @Column(name = "LASTNAME")
+    @NotNull
+    @Size(max = 30)
+    private String lastname;
+
+    @Column(name = "EMAIL")
+    @NotNull
+    @Size(max = 50)
+    private String email;
+
+    @Column(name = "CONTACT_NUMBER")
+    @Size(max = 30)
+    private String contactnumber;
+
+    @Column(name = "PASSWORD")
+    @NotNull
+    @Size(max = 255)
+    private String password;
+
+    @Column(name = "SALT")
+    @NotNull
+    @Size(max = 255)
+    private String salt;
+
+>>>>>>> master
     public Integer getId() {
         return id;
     }
@@ -63,6 +119,7 @@ public class CustomerEntity {
         this.uuid = uuid;
     }
 
+<<<<<<< HEAD
     public String getFirstName() {
         return firstName;
     }
@@ -77,6 +134,22 @@ public class CustomerEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+=======
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+>>>>>>> master
     }
 
     public String getEmail() {
@@ -87,12 +160,21 @@ public class CustomerEntity {
         this.email = email;
     }
 
+<<<<<<< HEAD
     public String getContactNumber() {
         return contactNumber;
     }
 
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
+=======
+    public String getContactnumber() {
+        return contactnumber;
+    }
+
+    public void setContactnumber(String contactnumber) {
+        this.contactnumber = contactnumber;
+>>>>>>> master
     }
 
     public String getPassword() {
@@ -112,6 +194,7 @@ public class CustomerEntity {
     }
 
 
+<<<<<<< HEAD
 
     @Override
     public boolean equals(Object o) {
@@ -127,4 +210,6 @@ public class CustomerEntity {
                 Objects.equals(password, that.password) &&
                 Objects.equals(salt, that.salt);
     }
+=======
+>>>>>>> master
 }
