@@ -18,6 +18,9 @@ import java.util.Set;
       name = "findByName",
       query =
           "select r from Restaurant r where lower(r.restaurantName) like :restaurantName order by r.restaurantName"),
+  @NamedQuery(
+      name = "findRestaurantByUuid",
+      query = "select r from Restaurant r where lower(r.uuid) = :restaurantUuid")
 })
 public class Restaurant {
   @Id

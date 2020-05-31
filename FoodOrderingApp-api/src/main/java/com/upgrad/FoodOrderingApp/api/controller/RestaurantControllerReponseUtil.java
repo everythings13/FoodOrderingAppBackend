@@ -1,15 +1,10 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.google.common.base.Joiner;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponseAddress;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponseAddressState;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantList;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
-import com.upgrad.FoodOrderingApp.service.entity.Category;
-import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
-import com.upgrad.FoodOrderingApp.service.entity.RestaurantAddress;
-import com.upgrad.FoodOrderingApp.service.entity.State;
+import com.upgrad.FoodOrderingApp.api.model.*;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,7 +24,6 @@ public class RestaurantControllerReponseUtil {
 
   private static RestaurantList getRestaurantListObject(Restaurant restaurant) {
     List<String> categoryNames = getCategoryNames(restaurant);
-    RestaurantAddress restaurantAddress = restaurant.getRestaurantAddress();
     return new RestaurantList()
         .id(UUID.fromString(restaurant.getUuid()))
         .restaurantName(restaurant.getRestaurantName())
@@ -37,7 +31,7 @@ public class RestaurantControllerReponseUtil {
         .customerRating(restaurant.getCustomerRating())
         .averagePrice(restaurant.getAveragePrice())
         .numberCustomersRated(restaurant.getNumberCustomersRated())
-        .address(getResponseAddress(restaurantAddress))
+        .address(getResponseAddress(restaurant.getRestaurantAddress()))
         .categories(COMMA_JOINER.join(categoryNames));
   }
 
@@ -59,14 +53,47 @@ public class RestaurantControllerReponseUtil {
   }
 
   private static List<String> getCategoryNames(Restaurant restaurant) {
-    //        List<RestaurantCategory> categoriesByRestaurantId =
-    //            restaurantCategoryService.getCategoriesByRestaurantId(restaurant.getId());
-    //        return categoriesByRestaurantId.stream()
-    //            .map(category -> categoryService.getCategoryNameByCategoryUuid(category.getId()))
-    //            .collect(Collectors.toList());
     return restaurant.getCategories().stream()
         .map(Category::getCategoryName)
         .sorted()
         .collect(Collectors.toList());
+  }
+
+  public static RestaurantDetailsResponse getRestaurantDetailsResponse(Restaurant restaurant) {
+    return new RestaurantDetailsResponse()
+        .id(UUID.fromString(restaurant.getUuid()))
+        .restaurantName(restaurant.getRestaurantName())
+        .photoURL(restaurant.getPhotoURL())
+        .customerRating(restaurant.getCustomerRating())
+        .averagePrice(restaurant.getAveragePrice())
+        .numberCustomersRated(restaurant.getNumberCustomersRated())
+        .address(getResponseAddress(restaurant.getRestaurantAddress()))
+        .categories(getCategoryList(restaurant));
+  }
+
+  private static List<CategoryList> getCategoryList(Restaurant restaurant) {
+    return restaurant.getCategories().stream()
+        .map(RestaurantControllerReponseUtil::getCategoryListObject)
+        .sorted(Comparator.comparing(CategoryList::getCategoryName))
+        .collect(Collectors.toList());
+  }
+
+  private static CategoryList getCategoryListObject(Category category) {
+    List<ItemList> itemListObjectList =
+        category.getItemEntities().stream()
+            .map(RestaurantControllerReponseUtil::getItemListObject)
+            .collect(Collectors.toList());
+    return new CategoryList()
+        .id(UUID.fromString(category.getUuid()))
+        .categoryName(category.getCategoryName())
+        .itemList(itemListObjectList);
+  }
+
+  private static ItemList getItemListObject(Item item) {
+    return new ItemList()
+        .id(UUID.fromString(item.getUuid()))
+        .itemName(item.getItemName())
+        .price(item.getPrice())
+        .itemType(ItemList.ItemTypeEnum.fromValue(item.getType()));
   }
 }

@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
+import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponse;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantCategoryService;
@@ -54,7 +55,7 @@ public class RestaurantController {
   @RequestMapping(
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      path = "/restaurant/name/{restaurant_name}")
+      path = "/name/{restaurant_name}")
   public ResponseEntity<RestaurantListResponse> getListOfRestaurantsByName(
       @PathVariable String restaurant_name) throws RestaurantNotFoundException {
     if (Strings.isNullOrEmpty(restaurant_name)
@@ -71,7 +72,7 @@ public class RestaurantController {
   @RequestMapping(
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      path = "/restaurant/category/{category_id}")
+      path = "category/{category_id}")
   public ResponseEntity<RestaurantListResponse> getListOfRestaurantsByCategoryId(
       @PathVariable String category_id) throws CategoryNotFoundException {
     if (Strings.isNullOrEmpty(category_id) || category_id.equalsIgnoreCase(EMPTY_STRING_AS_JSON)) {
@@ -89,6 +90,32 @@ public class RestaurantController {
 
     return new ResponseEntity<>(
         RestaurantControllerReponseUtil.getRestaurantListResponse(listOfRestaurants),
+        HttpStatus.OK);
+  }
+
+  @RequestMapping(
+      method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      path = "/{restaurant_id}")
+  public ResponseEntity<RestaurantDetailsResponse> getListOfRestaurantsByRestaurantId(
+      @PathVariable String restaurant_id) throws RestaurantNotFoundException {
+    if (Strings.isNullOrEmpty(restaurant_id)
+        || restaurant_id.equalsIgnoreCase(EMPTY_STRING_AS_JSON)) {
+      throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
+    }
+    Restaurant restaurant = restaurantService.getRestaurantByRestaurantUuid(restaurant_id);
+
+    if (Objects.isNull(restaurant)) {
+      throw new RestaurantNotFoundException("RNF-001", "No restaurant by this id");
+    }
+//    List<Restaurant> listOfRestaurants =
+//        restaurantService.getRestaurantByCategoryId(category.getId()).stream()
+//            .map(RestaurantCategory::getRestaurant)
+//            .sorted(Comparator.comparing(Restaurant::getRestaurantName))
+//            .collect(Collectors.toList());
+
+    return new ResponseEntity<>(
+        RestaurantControllerReponseUtil.getRestaurantDetailsResponse(restaurant),
         HttpStatus.OK);
   }
 }
