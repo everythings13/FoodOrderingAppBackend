@@ -93,63 +93,20 @@ public CustomerAuthEntity authenticate(String contactnumber, String password) th
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity logout(String token) throws AuthorizationFailedException {
       CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
-      if(customerAuthEntity == null){
-          throw new AuthorizationFailedException(ATHR_001 ,CUSTOMER_IS_NOT_LOGGED_IN);
-      }
-      if(customerAuthEntity.getLogoutAt() != null)
-      {
-          throw new AuthorizationFailedException(ATHR_002 , CUSTOMER_IS_LOGGED_OUT);
-      }
       final ZonedDateTime now = ZonedDateTime.now();
-      if(now.getSecond() > customerAuthEntity.getExpiresAt().getSecond())
-      {
-          throw new AuthorizationFailedException(ATHR_003,SESSION_IS_EXPIRED);
-      }
       customerAuthEntity.setLogoutAt(now);
       return customerDao.logout(customerAuthEntity);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomer(String token, String firstName, String lastName) throws AuthorizationFailedException {
-        CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
-        if(customerAuthEntity == null)
-        {
-            throw new AuthorizationFailedException(ATHR_001, CUSTOMER_IS_NOT_LOGGED_IN);
-        }
-        if(customerAuthEntity.getLogoutAt() != null)
-        {
-            throw new AuthorizationFailedException(ATHR_002, CUSTOMER_IS_LOGGED_OUT);
-        }
-        final ZonedDateTime now = ZonedDateTime.now();
-        if(now.getSecond() > customerAuthEntity.getExpiresAt().getSecond())
-        {
-            throw new AuthorizationFailedException(ATHR_003, SESSION_IS_EXPIRED);
-        }
-        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
-        customerEntity.setFirstname(firstName);
-        customerEntity.setLastname((lastName));
+    public CustomerEntity updateCustomer(CustomerEntity customerEntity) {
+
         return customerDao.updateCustomer(customerEntity);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomerPassword(String token, String old_password, String new_password) throws UpdateCustomerException, AuthorizationFailedException {
-        CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
-        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
-        if(CommonUtil.isNullOrEmpty(old_password) || CommonUtil.isNullOrEmpty(new_password)) {
-            throw new UpdateCustomerException(UCR_003, NO_FIELD_SHOULD_BE_EMPTY);
-        }
-        if(customerAuthEntity == null) {
-            throw new AuthorizationFailedException(ATHR_001, CUSTOMER_IS_NOT_LOGGED_IN);
-        }
-        if(customerAuthEntity.getLogoutAt() != null)
-        {
-            throw new AuthorizationFailedException(ATHR_002 , CUSTOMER_IS_LOGGED_OUT);
-        }
-        final ZonedDateTime now = ZonedDateTime.now();
-        if(now.getSecond() > customerAuthEntity.getExpiresAt().getSecond())
-        {
-            throw new AuthorizationFailedException(ATHR_003,SESSION_IS_EXPIRED);
-        }
+    public CustomerEntity updateCustomerPassword(String old_password, String new_password, CustomerEntity customerEntity) throws UpdateCustomerException {
+
         String oldEncryptedPassword = cryptographyProvider.encrypt(old_password,customerEntity.getSalt());
         String newEncryptedPassword = cryptographyProvider.encrypt(new_password,customerEntity.getSalt());
 
@@ -164,6 +121,24 @@ public CustomerAuthEntity authenticate(String contactnumber, String password) th
         }
         customerEntity.setPassword(newEncryptedPassword);
         return customerDao.updateCustomerPassword(customerEntity);
+    }
+
+    public CustomerEntity getCustomer(String token) throws AuthorizationFailedException
+    {
+        CustomerAuthEntity customerAuthEntity = customerDao.getUserByToken(token);
+        if(customerAuthEntity == null) {
+            throw new AuthorizationFailedException(ATHR_001, CUSTOMER_IS_NOT_LOGGED_IN);
+        }
+        if(customerAuthEntity.getLogoutAt() != null)
+        {
+            throw new AuthorizationFailedException(ATHR_002 , CUSTOMER_IS_LOGGED_OUT);
+        }
+        final ZonedDateTime now = ZonedDateTime.now();
+        if(now.isAfter(customerAuthEntity.getExpiresAt()))
+        {
+            throw new AuthorizationFailedException(ATHR_003,SESSION_IS_EXPIRED);
+        }
+        return customerAuthEntity.getCustomer();
     }
 }
 

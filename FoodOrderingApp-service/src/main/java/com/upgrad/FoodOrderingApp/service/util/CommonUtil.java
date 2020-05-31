@@ -57,10 +57,27 @@ public class CommonUtil {
     public static boolean customerEntityCheck(CustomerEntity customerEntity)
     {
         boolean notValid = false;
-        if(isNullOrEmpty(customerEntity.getFirstname()) || isNullOrEmpty(customerEntity.getPassword())|| isNullOrEmpty(customerEntity.getEmail())||isNullOrEmpty(customerEntity.getContactnumber()))
+        if(isNullOrEmpty(customerEntity.getFirstName()))
         {
             notValid = true;
+            return notValid;
         }
+        if(isNullOrEmpty(customerEntity.getPassword()))
+        {
+            notValid = true;
+            return notValid;
+        }
+        if(isNullOrEmpty(customerEntity.getEmail()))
+        {
+            notValid = true;
+            return notValid;
+        }
+        if(isNullOrEmpty(customerEntity.getContactnumber()))
+        {
+            notValid = true;
+            return notValid;
+        }
+        System.out.println(notValid);
         return notValid;
     }
 
