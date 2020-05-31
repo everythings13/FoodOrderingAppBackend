@@ -82,7 +82,7 @@ public class CustomerEntity {
         return lastName;
     }
 
-    public void setLastName(String lastname) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
