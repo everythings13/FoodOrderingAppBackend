@@ -1,34 +1,28 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.google.common.base.Joiner;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponseAddress;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponseAddressState;
-import com.upgrad.FoodOrderingApp.api.model.RestaurantList;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantCategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
-import com.upgrad.FoodOrderingApp.service.entity.Category;
 import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
-import com.upgrad.FoodOrderingApp.service.entity.RestaurantAddress;
-import com.upgrad.FoodOrderingApp.service.entity.State;
+import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
+import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurant")
 public class RestaurantController {
 
-  private static final Joiner COMMA_JOINER = Joiner.on(',');
+  private static final String EMPTY_STRING_AS_JSON = "\"\"";
   private final RestaurantService restaurantService;
   private final RestaurantCategoryService restaurantCategoryService;
   private final CategoryService categoryService;
@@ -46,54 +40,25 @@ public class RestaurantController {
   @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<RestaurantListResponse> getListOfRestaurants() {
     List<Restaurant> listOfRestaurants = restaurantService.getListOfRestaurants();
-    return new ResponseEntity<>(getRestaurantListResponse(listOfRestaurants), HttpStatus.OK);
+    return new ResponseEntity<>(
+        RestaurantControllerReponseUtil.getRestaurantListResponse(listOfRestaurants),
+        HttpStatus.OK);
   }
 
-  private RestaurantListResponse getRestaurantListResponse(List<Restaurant> restaurants) {
-    List<RestaurantList> restaurantList =
-        restaurants.stream().map(this::getRestaurantListObject).collect(Collectors.toList());
-    return new RestaurantListResponse().restaurants(restaurantList);
-  }
-
-  private RestaurantList getRestaurantListObject(Restaurant restaurant) {
-    List<String> categoryNames = getCategoryNames(restaurant);
-    RestaurantAddress restaurantAddress = restaurant.getRestaurantAddress();
-    return new RestaurantList()
-        .id(UUID.fromString(restaurant.getUuid()))
-        .restaurantName(restaurant.getRestaurantName())
-        .photoURL(restaurant.getPhotoURL())
-        .customerRating(restaurant.getCustomerRating())
-        .averagePrice(restaurant.getAveragePrice())
-        .numberCustomersRated(restaurant.getNumberCustomersRated())
-        .address(getResponseAddress(restaurantAddress))
-        .categories(COMMA_JOINER.join(categoryNames));
-  }
-
-  private RestaurantDetailsResponseAddress getResponseAddress(RestaurantAddress restaurantAddress) {
-    return new RestaurantDetailsResponseAddress()
-        .id(UUID.fromString(restaurantAddress.getUuid()))
-        .flatBuildingName(restaurantAddress.getFlatNumber())
-        .locality(restaurantAddress.getLocality())
-        .city(restaurantAddress.getCity())
-        .pincode(restaurantAddress.getPincode())
-        .state(getStateResponse(restaurantAddress.getState()));
-  }
-
-  private RestaurantDetailsResponseAddressState getStateResponse(State state) {
-    return new RestaurantDetailsResponseAddressState()
-        .id(UUID.fromString(state.getUuid()))
-        .stateName(state.getStateName());
-  }
-
-  private List<String> getCategoryNames(Restaurant restaurant) {
-//        List<RestaurantCategory> categoriesByRestaurantId =
-//            restaurantCategoryService.getCategoriesByRestaurantId(restaurant.getId());
-//        return categoriesByRestaurantId.stream()
-//            .map(category -> categoryService.getCategoryNameByCategoryId(category.getId()))
-//            .collect(Collectors.toList());
-    return restaurant.getCategories().stream()
-        .map(Category::getCategoryName)
-        .sorted()
-        .collect(Collectors.toList());
+  @RequestMapping(
+      method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      path = "/restaurant/name/{restaurant_name}")
+  public ResponseEntity<RestaurantListResponse> getListOfRestaurants(
+      @PathVariable String restaurant_name) throws RestaurantNotFoundException {
+    if (Strings.isNullOrEmpty(restaurant_name)
+        || restaurant_name.equalsIgnoreCase(EMPTY_STRING_AS_JSON)) {
+      throw new RestaurantNotFoundException("RNF-003", "Restaurant name field should not be empty");
+    }
+    List<Restaurant> listOfRestaurants =
+        restaurantService.getListOfRestaurantsByName(restaurant_name);
+    return new ResponseEntity<>(
+        RestaurantControllerReponseUtil.getRestaurantListResponse(listOfRestaurants),
+        HttpStatus.OK);
   }
 }

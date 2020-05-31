@@ -20,4 +20,10 @@ public class RestaurantService {
   public List<Restaurant> getListOfRestaurants() {
     return restaurantDao.getRestaurantList();
   }
+
+  /**  @return list of restaurants*/
+  public List<Restaurant> getListOfRestaurantsByName(String name) {
+    return restaurantDao.getRestaurantsByName(name);
+  }
+
 }

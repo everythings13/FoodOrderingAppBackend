@@ -13,7 +13,11 @@ import java.util.Set;
 @Entity
 @Table(name = "restaurant")
 @NamedQueries({
-  @NamedQuery(name = "getAll", query = "select r from Restaurant r order by r.customerRating desc")
+  @NamedQuery(name = "getAll", query = "select r from Restaurant r order by r.customerRating desc"),
+  @NamedQuery(
+      name = "findByName",
+      query =
+          "select r from Restaurant r where lower(r.restaurantName) like :restaurantName order by r.restaurantName"),
 })
 public class Restaurant {
   @Id
