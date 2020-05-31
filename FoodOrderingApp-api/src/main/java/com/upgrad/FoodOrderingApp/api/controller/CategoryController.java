@@ -27,30 +27,40 @@ public class CategoryController {
   @RequestMapping(method = RequestMethod.GET, path = "/category")
   public ResponseEntity<List<CategoryListResponse>> getCategories() {
     List<CategoryEntity> categories = categoryBusinessService.getAllCategories();
-    List<CategoryListResponse> categoryListResponses = new ArrayList<>();
-    categories.stream()
-        .forEach(
-            categoryEntity -> {
-              CategoryListResponse response = new CategoryListResponse();
-              response.setCategoryName(categoryEntity.getCategoryName());
-              response.setId(UUID.fromString(categoryEntity.getUuid()));
-              categoryListResponses.add(response);
-            });
+    List<CategoryListResponse> categoryListResponses = getCategoryListResponses(categories);
     return new ResponseEntity<List<CategoryListResponse>>(categoryListResponses, HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}")
   public ResponseEntity<CategoryDetailsResponse> getCategoryById(
       @PathVariable("category_id") String categoryId) throws CategoryNotFoundException {
-    if (categoryId == null ) {
+    if (categoryId == null) {
       throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
     }
-    CategoryEntity categoryDetails =
-        categoryBusinessService.getCategoryById(categoryId);
-    if (categoryDetails == null) {
-      throw new CategoryNotFoundException("CNF-002", "No category by this id");
-    }
+    CategoryEntity categoryDetails = categoryBusinessService.getCategoryById(categoryId);
     List<ItemsEntity> itemDetails = categoryBusinessService.getItems(categoryDetails.getId());
+    CategoryDetailsResponse response = getCategoryDetailsResponse(categoryDetails, itemDetails);
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  private List<CategoryListResponse> getCategoryListResponses(List<CategoryEntity> categories) {
+    List<CategoryListResponse> categoryListResponses = new ArrayList<>();
+    if (categories != null) {
+      categories.stream()
+          .forEach(
+              categoryEntity -> {
+                CategoryListResponse response = new CategoryListResponse();
+                response.setCategoryName(categoryEntity.getCategoryName());
+                response.setId(UUID.fromString(categoryEntity.getUuid()));
+                categoryListResponses.add(response);
+              });
+    }
+    return categoryListResponses;
+  }
+
+  private CategoryDetailsResponse getCategoryDetailsResponse(
+      CategoryEntity categoryDetails, List<ItemsEntity> itemDetails) {
     CategoryDetailsResponse response = new CategoryDetailsResponse();
     if (itemDetails != null) {
       itemDetails.stream()
@@ -66,7 +76,6 @@ public class CategoryController {
     }
     response.setId(UUID.fromString(categoryDetails.getUuid()));
     response.setCategoryName(categoryDetails.getCategoryName());
-
-    return new ResponseEntity<>(response, HttpStatus.OK);
+    return response;
   }
 }

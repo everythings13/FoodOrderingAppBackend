@@ -6,6 +6,7 @@ import com.upgrad.FoodOrderingApp.service.entity.ItemsEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
@@ -19,14 +20,22 @@ public class CategoryDao {
 
     @Transactional
     public List<CategoryEntity> getAllCategories(){
+        try{
         return entityManager.createNamedQuery("getAllCategories",CategoryEntity.class).getResultList();
+        }catch (NoResultException ex){
+            return null;
+        }
     }
 
     public CategoryEntity getcategoryById(String uuid){
-        System.out.println("uuid ----------"+uuid);
-        CategoryEntity entity=
-         entityManager.createNamedQuery("getCategoryByUUID",CategoryEntity.class).setParameter("uuid",uuid).getSingleResult();
-        return entity;
+        try{
+            CategoryEntity entity=
+                    entityManager.createNamedQuery("getCategoryByUUID",CategoryEntity.class).setParameter("uuid",uuid).getSingleResult();
+            return entity;
+        }catch (NoResultException ex){
+            return null;
+        }
+
     }
 
     public List<CategoryItemEntity> getCategoryItems(BigInteger categoryId){

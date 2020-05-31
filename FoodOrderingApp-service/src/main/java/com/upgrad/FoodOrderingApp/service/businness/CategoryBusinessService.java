@@ -4,6 +4,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CategoryDao;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryItemEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemsEntity;
+import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,14 @@ public class CategoryBusinessService {
     private CategoryDao categoryDao;
 
     public List<CategoryEntity> getAllCategories(){
-        return categoryDao.getAllCategories();
+        List<CategoryEntity> categories= categoryDao.getAllCategories();
+        return categories;
     }
 
-    public CategoryEntity getCategoryById(String id){
+    public CategoryEntity getCategoryById(String id) throws CategoryNotFoundException {
         CategoryEntity category = categoryDao.getcategoryById(id);
-        if(category.getId()==null ||category.getId().equals("")){
-            return null;
+        if(category==null){
+            throw new CategoryNotFoundException("CNF-002", "No category by this id");
         }
         return category;
     }
@@ -39,7 +41,6 @@ public class CategoryBusinessService {
             });
             itemDetailsList=categoryDao.getItemsByItemIds(itemIds);
         }
-
             return itemDetailsList;
 
     }

@@ -19,15 +19,11 @@ public class OrderBusinessService {
       throws CouponNotFoundException, AuthorizationFailedException {
     // validateCustomerAuth(accessToken);
     ValidateCoupon(couponName);
-    try {
-      OrderCouponEntity orderCoupon = orderCouponDao.getOrderDetails(couponName);
-      if (orderCoupon == null) {
-        throw new CouponNotFoundException("CPF-001", "No coupon by this name");
-      }
-      return orderCoupon;
-    } catch (NoResultException ex) {
-      return null;
+    OrderCouponEntity orderCoupon = orderCouponDao.getOrderDetails(couponName);
+    if (orderCoupon == null) {
+      throw new CouponNotFoundException("CPF-001", "No coupon by this name");
     }
+    return orderCoupon;
   }
 
   public OrderCouponEntity getCouponDetailsByUUid(String uuid) throws CouponNotFoundException {

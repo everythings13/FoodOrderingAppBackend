@@ -20,25 +20,40 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @Author : Harika Etamukkala
- * OrderController
- * */
+/** @Author : Harika Etamukkala OrderController */
 @RestController
 public class OrderController {
+    //Service class for order details
   @Autowired private OrderBusinessService orderCouponBusinessService;
 
+  /**
+   * This Method is used to retrieve coupon details
+   *
+   * @param couponName
+   * @param accessToken
+   * @return OrderListCoupon
+   * @throws CouponNotFoundException
+   * @throws AuthorizationFailedException
+   */
   @RequestMapping(method = RequestMethod.GET, path = "/order/coupon/{coupon_name}")
   public ResponseEntity<OrderListCoupon> coupon(
       @PathVariable("coupon_name") String couponName,
       @RequestHeader("authorization") final String accessToken)
       throws CouponNotFoundException, AuthorizationFailedException {
-    //getting coupon details
+    // getting coupon details
     OrderListCoupon couponResponse = getOrderCouponResponse(couponName, accessToken);
     ResponseEntity<OrderListCoupon> response = new ResponseEntity<>(couponResponse, HttpStatus.OK);
     return response;
   }
 
+  /**
+   * This method is used to get all orders of a customer
+   *
+   * @param accessToken
+   * @return
+   * @throws AuthorizationFailedException
+   * @throws CouponNotFoundException
+   */
   @RequestMapping(method = RequestMethod.GET, path = "/order")
   public ResponseEntity<List<OrderList>> getAllOrder(
       @RequestHeader("authorization") final String accessToken)
@@ -48,6 +63,18 @@ public class OrderController {
     return new ResponseEntity<List<OrderList>>(response, HttpStatus.OK);
   }
 
+  /**
+   * This method is used to save order details
+   *
+   * @param orderRequest
+   * @param accessToken
+   * @return
+   * @throws CouponNotFoundException
+   * @throws PaymentMethodNotFoundException
+   * @throws AuthorizationFailedException
+   * @throws RestaurantNotFoundException
+   * @throws AddressNotFoundException
+   */
   @RequestMapping(
       method = RequestMethod.POST,
       path = "/order",
@@ -65,7 +92,8 @@ public class OrderController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  private OrderListEntity getOrderListEntity(@RequestBody(required = true) SaveOrderRequest orderRequest) {
+  private OrderListEntity getOrderListEntity(
+      @RequestBody(required = true) SaveOrderRequest orderRequest) {
     OrderListEntity order = new OrderListEntity();
     order.setBill(orderRequest.getBill());
     order.setUuid(UUID.randomUUID());
@@ -90,45 +118,48 @@ public class OrderController {
     couponResponse.setPercent(couponCodeDetails.getPercent());
     return couponResponse;
   }
+
   private List<OrderList> convertToResponse(List<OrderListEntity> orderList) {
     List<OrderList> response = new ArrayList<>();
-    orderList.stream()
-            .forEach(
-                    order -> {
-                      OrderList orderModel = new OrderList();
-                      orderModel.setId(order.getUuid());
-                      orderModel.setBill(order.getBill());
-                      orderModel.setDate(order.getDate().toString());
-                      orderModel.setDiscount(order.getDiscount());
-                      OrderCouponEntity couponEntity =
-                              orderCouponBusinessService.getCouponDetailsById(order.getCouponId());
-                      OrderListCoupon coupon = new OrderListCoupon();
-                      BeanUtils.copyProperties(couponEntity, coupon);
-                      coupon.setId(UUID.fromString(couponEntity.getUuid()));
-                      OrderListAddress addressList = new OrderListAddress();
-                      AddressEntity addressEntity =
-                              orderCouponBusinessService.getAddressDetailsById(order.getAddressId());
-                      BeanUtils.copyProperties(addressEntity, addressList);
-                      addressList.setId(UUID.fromString(addressEntity.getUuid()));
-                      OrderListPayment payment = new OrderListPayment();
-                      com.upgrad.FoodOrderingApp.service.entity.OrderListPayment paymentEntity =
-                              orderCouponBusinessService.getPaymentDetailsById(order.getPaymentId());
-                      if (paymentEntity != null) {
-                        BeanUtils.copyProperties(paymentEntity, payment);
-                        payment.setId(UUID.fromString(paymentEntity.getUuid()));
-                        orderModel.setPayment(payment);
-                      }
-                      OrderListCustomer customer = new OrderListCustomer();
-                      CustomerEntity customerEntity =
-                              orderCouponBusinessService.getCustomerById(order.getCustomerId());
-                      BeanUtils.copyProperties(customerEntity, customer);
-                      customer.setId(UUID.fromString(couponEntity.getUuid()));
-                      orderModel.setCoupon(coupon);
-                      orderModel.setCustomer(customer);
+    if (orderList != null) {
+      orderList.stream()
+          .forEach(
+              order -> {
+                OrderList orderModel = new OrderList();
+                orderModel.setId(order.getUuid());
+                orderModel.setBill(order.getBill());
+                orderModel.setDate(order.getDate().toString());
+                orderModel.setDiscount(order.getDiscount());
+                OrderCouponEntity couponEntity =
+                    orderCouponBusinessService.getCouponDetailsById(order.getCouponId());
+                OrderListCoupon coupon = new OrderListCoupon();
+                BeanUtils.copyProperties(couponEntity, coupon);
+                coupon.setId(UUID.fromString(couponEntity.getUuid()));
+                OrderListAddress addressList = new OrderListAddress();
+                AddressEntity addressEntity =
+                    orderCouponBusinessService.getAddressDetailsById(order.getAddressId());
+                BeanUtils.copyProperties(addressEntity, addressList);
+                addressList.setId(UUID.fromString(addressEntity.getUuid()));
+                OrderListPayment payment = new OrderListPayment();
+                com.upgrad.FoodOrderingApp.service.entity.OrderListPayment paymentEntity =
+                    orderCouponBusinessService.getPaymentDetailsById(order.getPaymentId());
+                if (paymentEntity != null) {
+                  BeanUtils.copyProperties(paymentEntity, payment);
+                  payment.setId(UUID.fromString(paymentEntity.getUuid()));
+                  orderModel.setPayment(payment);
+                }
+                OrderListCustomer customer = new OrderListCustomer();
+                CustomerEntity customerEntity =
+                    orderCouponBusinessService.getCustomerById(order.getCustomerId());
+                BeanUtils.copyProperties(customerEntity, customer);
+                customer.setId(UUID.fromString(couponEntity.getUuid()));
+                orderModel.setCoupon(coupon);
+                orderModel.setCustomer(customer);
 
-                      orderModel.setAddress(addressList);
-                      response.add(orderModel);
-                    });
+                orderModel.setAddress(addressList);
+                response.add(orderModel);
+              });
+    }
     return response;
   }
 }
