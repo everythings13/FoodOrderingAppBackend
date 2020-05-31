@@ -1,79 +1,80 @@
-//
-//package com.upgrad.FoodOrderingApp.api.controller;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.upgrad.FoodOrderingApp.api.model.AddressList;
-//import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
-//import com.upgrad.FoodOrderingApp.api.model.StatesList;
-//import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
-//import com.upgrad.FoodOrderingApp.service.businness.AddressService;
-//import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-//import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-//import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-//import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-//import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
-//import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
-//import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.context.junit4.SpringRunner;
-//import org.springframework.test.web.servlet.MockMvc;
-//
-//import java.util.Collections;
-//import java.util.UUID;
-//
-//import static org.junit.Assert.assertNull;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.anyString;
-//import static org.mockito.Mockito.*;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-//// This class contains all the test cases regarding the address controller
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//public class AddressControllerTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockBean
-//    private AddressService mockAddressService;
-//
-//    @MockBean
-//    private CustomerService mockCustomerService;
-//
-//    // ------------------------------------------ POST /address ------------------------------------------
-//
-//    //This test case passes when the address is successfully saved.
-//    @Test
-//    public void shouldSaveAddress() throws Exception {
-//        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(new CustomerEntity());
-//        when(mockAddressService.getStateByUUID("testUUID")).thenReturn(new StateEntity());
-//
-//        final AddressEntity addressEntity = new AddressEntity();
-//        addressEntity.setUuid("randomUuid001");
-//        when(mockAddressService.saveAddress(any(), any())).thenReturn(addressEntity);
-//
-//        mockMvc
-//                .perform(post("/address?content=my_address")
-//                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-//                        .header("authorization", "Bearer database_accesstoken2")
-//                        .content("{\"flat_building_name\":\"xyz\", \"locality\":\"abc\", \"city\":\"pqr\", \"pincode\":\"\", \"state_uuid\":\"testUUID\"}"))
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("id").value("randomUuid001"))
-//                .andExpect(jsonPath("status").value("ADDRESS SUCCESSFULLY REGISTERED"));
-//        verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
-//        verify(mockAddressService, times(1)).getStateByUUID("testUUID");
-//        verify(mockAddressService, times(1)).saveAddress(any(), any());
-//    }
+
+package com.upgrad.FoodOrderingApp.api.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upgrad.FoodOrderingApp.api.model.AddressList;
+import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
+import com.upgrad.FoodOrderingApp.api.model.StatesList;
+import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
+import com.upgrad.FoodOrderingApp.service.businness.AddressService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+// This class contains all the test cases regarding the address controller
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class AddressControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private AddressService mockAddressService;
+
+    @MockBean
+    private CustomerService mockCustomerService;
+
+    // ------------------------------------------ POST /address ------------------------------------------
+
+    //This test case passes when the address is successfully saved.
+    @Test
+    public void shouldSaveAddress() throws Exception {
+        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(new CustomerEntity());
+        when(mockAddressService.getStateByUUID("testUUID")).thenReturn(new StateEntity());
+
+        final AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setUuid("randomUuid001");
+        when(mockAddressService.saveAddress(any(), any())).thenReturn(addressEntity);
+
+        mockMvc
+                .perform(post("/address?content=my_address")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .header("authorization", "Bearer database_accesstoken2")
+                        .content("{\"flat_building_name\":\"xyz\", \"locality\":\"abc\", \"city\":\"pqr\", \"pincode\":\"\", \"state_uuid\":\"testUUID\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value("randomUuid001"))
+                .andExpect(jsonPath("status").value("ADDRESS SUCCESSFULLY REGISTERED"));
+        verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
+        verify(mockAddressService, times(1)).getStateByUUID("testUUID");
+        verify(mockAddressService, times(1)).saveAddress(any(), any());
+    }
 //
 //    //This test case passes when you have handled the exception of trying to save an address with non existing access-token.
 //    @Test
@@ -183,7 +184,7 @@
 //        verify(mockAddressService, times(1)).saveAddress(any(), any());
 //    }
 //
-//
+///*
 //    // ------------------------------------------ DELETE /address/{address_id} ------------------------------------------
 //
 //    //This test case passes when you can successfully delete an address.
@@ -305,6 +306,7 @@
 //        verify(mockAddressService, times(1)).getAddressByUUID("82849cd5-106e-4b34-b9bf-94954c6ff527", customerEntity);
 //        verify(mockAddressService, times(0)).deleteAddress(any());
 //    }
+//    */
 //
 //    // ------------------------------------------ GET /address/customer ------------------------------------------
 //
@@ -433,5 +435,5 @@
 //        final StatesListResponse statesLists = new ObjectMapper().readValue(response, StatesListResponse.class);
 //        assertNull(statesLists.getStates());
 //    }
-//}
-//
+}
+

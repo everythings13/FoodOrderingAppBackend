@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +41,19 @@ public class AddressService {
     public AddressEntity saveAddress(AddressEntity addressEntity, String accessToken, String stateUUID)
             throws AuthorizationFailedException, SaveAddressException, AddressNotFoundException {
 
+        StateEntity state = getStateByUUID(stateUUID);
+        addressEntity.setState(state);
+
+        return saveAddress(addressEntity,accessToken);
+    }
+
+    public AddressEntity saveAddress(AddressEntity addressEntity, String accessToken) throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
         validateCustomerAuthEntity(accessToken);
 
-        StateEntity state = stateDao.getStateById(Integer.parseInt(stateUUID));
-
-        if(!validateStateID(state))
+        if(!validateStateID(addressEntity.getStateEntity()))
         {
             throw new AddressNotFoundException(ANF_002,NO_STATE_BY_THIS_ID);
         }
-
-        addressEntity.setStateEntity(state);
 
         if(!validateAddressEntity(addressEntity))
         {
@@ -63,14 +67,23 @@ public class AddressService {
         return addressDao.save(addressEntity);
     }
 
+    public StateEntity getStateByUUID(String stateUUID)
+    {
+        return stateDao.getStateByUUID(Integer.parseInt(stateUUID));
+    }
+
     public List<AddressEntity> getAllSavedAddress(final String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthEntityByAccessToken(accessToken);
         validateCustomerAuthEntity(customerAuthEntity);
-        CustomerEntity customerEntity = customerAuthEntity.getCustomerEntity();
+        CustomerEntity customerEntity = customerAuthEntity.getCustomer();
 
-        return customerAddressDao.getAddressByCustomer(customerEntity);
+        return getAllAddress(customerEntity);
     }
 
+    public List<AddressEntity> getAllAddress(CustomerEntity customerEntity)
+    {
+        return customerAddressDao.getAddressByCustomer(customerEntity);
+    }
     public List<StateEntity> getAllStates() {
         return stateDao.getAllStates();
     }
@@ -133,26 +146,28 @@ public class AddressService {
             throw new AuthorizationFailedException(ATHR_001, CUSTOMER_IS_NOT_LOGGED_IN);
         } else if (customerAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException(ATHR_002, CUSTOMER_IS_LOGGED_OUT);
-        } else if (customerAuthEntity.getExpiresAt().compareTo(LocalDateTime.now()) < 0) {
+        } else if (customerAuthEntity.getExpiresAt().compareTo(ZonedDateTime.now()) < 0) {
             throw new AuthorizationFailedException(ATHR_003, SESSION_IS_EXPIRED);
         }
     }
 
     public AddressEntity deleteAddress(String accessToken, String addressId) throws AuthorizationFailedException, AddressNotFoundException {
+
+        CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthEntityByAccessToken(accessToken);
         validateCustomerAuthEntity(accessToken);
         if(addressId.isEmpty())
         {
             throw new AddressNotFoundException(ANF_005,ADDRESS_CANNOT_BE_EMPTY);
         }
 
-        AddressEntity addressEntity = addressDao.getAddressById(addressId);
+        AddressEntity addressEntity = getAddressByUUID(addressId);
         if(addressEntity == null)
         {
             throw new AddressNotFoundException(ANF_003,NO_ADDRESS_BY_THIS_ID);
         }
 
         CustomerEntity addressCustomerEntity = customerAddressDao.getCustomerByAddress(addressEntity);
-        CustomerEntity loggedInCustomerEntity = customerAuthDao.getCustomerAuthEntityByAccessToken(accessToken).getCustomerEntity();
+        CustomerEntity loggedInCustomerEntity = customerAuthDao.getCustomerAuthEntityByAccessToken(accessToken).getCustomer();
 
         if(!addressCustomerEntity.equals(loggedInCustomerEntity))
         {
@@ -162,5 +177,15 @@ public class AddressService {
         addressDao.deleteAddress(addressEntity);
 
         return addressEntity;
+    }
+
+    public AddressEntity getAddressByUUID(String addressId)
+    {
+        return addressDao.getAddressByUUID(addressId);
+    }
+
+    public AddressEntity getAddressByUUID(String uuid,CustomerEntity customerEntity)
+    {
+        return getAddressByUUID(uuid);
     }
 }

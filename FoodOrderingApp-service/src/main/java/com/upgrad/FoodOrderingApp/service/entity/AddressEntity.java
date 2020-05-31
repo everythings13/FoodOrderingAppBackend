@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Table(name = "address")
 @NamedQueries({
         @NamedQuery(
-                name = "getAddressById",
+                name = "getAddressByUUID",
                 query = "Select ae from AddressEntity ae where ae.uuid = :uuid"
         )}
 )
@@ -60,7 +60,7 @@ public class AddressEntity implements Serializable {
         return flatBuildingName;
     }
 
-    public void setFlatBuildingName(String flatBuildingName) {
+    public void setFlatBuilNo(String flatBuildingName) {
         this.flatBuildingName = flatBuildingName;
     }
 
@@ -92,7 +92,7 @@ public class AddressEntity implements Serializable {
         return stateEntity;
     }
 
-    public void setStateEntity(StateEntity stateEntity) {
+    public void setState(StateEntity stateEntity) {
         this.stateEntity = stateEntity;
     }
 }

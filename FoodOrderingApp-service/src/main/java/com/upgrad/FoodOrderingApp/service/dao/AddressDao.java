@@ -26,9 +26,9 @@ public class AddressDao {
     }
 
     @Transactional
-    public AddressEntity getAddressById(String addressId) {
+    public AddressEntity getAddressByUUID(String addressId) {
         try {
-            return entityManager.createNamedQuery("getAddressById", AddressEntity.class)
+            return entityManager.createNamedQuery("getAddressByUUID", AddressEntity.class)
                     .setParameter("uuid", addressId)
                     .getSingleResult();
         }

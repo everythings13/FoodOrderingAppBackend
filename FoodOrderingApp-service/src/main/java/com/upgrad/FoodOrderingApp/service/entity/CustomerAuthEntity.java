@@ -6,47 +6,49 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "customer_auth")
-@NamedQueries({
-        @NamedQuery(
-                name = "customerAuthByAccessToken",
-                query="select ut from CustomerAuthEntity ut where ut.accessToken = :accessToken ")
-})
-public class CustomerAuthEntity implements Serializable {
+@NamedQueries(
+        {
+                @NamedQuery(name = "customerByAuthtoken", query = "select u from CustomerAuthEntity u where u.accessToken =:accessToken")
+        }
+)
 
+public class CustomerAuthEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
+    @Column(name = "UUID")
     @Size(max = 200)
     private String uuid;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private CustomerEntity customerEntity;
+    @JoinColumn(name="customer_id")
+    private CustomerEntity customer;
 
     @Column(name = "access_token")
+    @Size(max = 500)
     private String accessToken;
 
     @Column(name = "login_at")
-    private LocalDateTime loginAt;
+    private ZonedDateTime  loginAt;
 
     @Column(name = "logout_at")
-    private LocalDateTime logoutAt;
+    private ZonedDateTime logoutAt;
 
     @Column(name = "expires_at")
-    private LocalDateTime expiresAt;
+    private ZonedDateTime expiresAt;
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUuid() {
@@ -57,12 +59,12 @@ public class CustomerAuthEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public String getAccessToken() {
@@ -73,27 +75,27 @@ public class CustomerAuthEntity implements Serializable {
         this.accessToken = accessToken;
     }
 
-    public LocalDateTime getLoginAt() {
+    public ZonedDateTime getLoginAt() {
         return loginAt;
     }
 
-    public void setLoginAt(LocalDateTime loginAt) {
+    public void setLoginAt(ZonedDateTime loginAt) {
         this.loginAt = loginAt;
     }
 
-    public LocalDateTime getLogoutAt() {
+    public ZonedDateTime getLogoutAt() {
         return logoutAt;
     }
 
-    public void setLogoutAt(LocalDateTime logoutAt) {
+    public void setLogoutAt(ZonedDateTime logoutAt) {
         this.logoutAt = logoutAt;
     }
 
-    public LocalDateTime getExpiresAt() {
+    public ZonedDateTime getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
+    public void setExpiresAt(ZonedDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
 }

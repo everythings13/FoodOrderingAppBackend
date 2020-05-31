@@ -15,11 +15,11 @@ public class StateDao {
     private EntityManager entityManager;
 
 
-    public StateEntity getStateById(Integer stateId)
+    public StateEntity getStateByUUID(Integer stateId)
     {
         try{
-            return entityManager.createNamedQuery("getStateById",StateEntity.class)
-                    .setParameter("stateId",stateId).getSingleResult();
+            return entityManager.createNamedQuery("getStateByUUID",StateEntity.class)
+                    .setParameter("uuid",stateId).getSingleResult();
         }
         catch (NoResultException e)
         {

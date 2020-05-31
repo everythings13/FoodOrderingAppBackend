@@ -2,42 +2,66 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
-@Table(name = "customer")
-public class CustomerEntity {
+@Table(name ="customer")
+@NamedQueries(
+        {
+            @NamedQuery(name= "customerByUuid", query="select cu from CustomerEntity cu where cu.uuid = :uuid"),
+                @NamedQuery(name= "customerById", query="select cu from CustomerEntity cu where cu.id = :id"),
+                @NamedQuery(name= "customerByEmail", query="select cu from CustomerEntity cu where cu.email = :email"),
+                @NamedQuery(name = "customerByContactNumber", query = "select cu from CustomerEntity cu where cu.contactnumber= :contactnumber")
 
+        }
+)
+public class CustomerEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
+    @Column(name = "UUID")
     @Size(max = 200)
     private String uuid;
 
-    @Column(name = "firstname")
+    @Column(name = "FIRSTNAME")
+    @NotNull
+    @Size(max = 30)
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "LASTNAME")
+    @NotNull
+    @Size(max = 30)
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "EMAIL")
+    @NotNull
+    @Size(max = 50)
     private String email;
 
     @Column(name = "contact_number")
-    private String contactNumber;
+    @Size(max = 30)
+    private String contactnumber;
 
-    @Column(name = "password")
+    @Column(name = "PASSWORD")
+    @NotNull
+    @Size(max = 255)
     private String password;
 
-    @Column(name = "salt")
+    @Column(name = "SALT")
+    @NotNull
+    @Size(max = 255)
     private String salt;
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUuid() {
@@ -60,7 +84,7 @@ public class CustomerEntity {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastname) {
         this.lastName = lastName;
     }
 
@@ -72,12 +96,12 @@ public class CustomerEntity {
         this.email = email;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
+    public String getContactnumber() {
+        return contactnumber;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
+    public void setContactnumber(String contactnumber) {
+        this.contactnumber = contactnumber;
     }
 
     public String getPassword() {
@@ -106,7 +130,7 @@ public class CustomerEntity {
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(email, that.email) &&
-                Objects.equals(contactNumber, that.contactNumber) &&
+                Objects.equals(contactnumber, that.contactnumber) &&
                 Objects.equals(password, that.password) &&
                 Objects.equals(salt, that.salt);
     }

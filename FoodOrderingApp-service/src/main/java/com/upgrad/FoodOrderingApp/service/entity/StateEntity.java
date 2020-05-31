@@ -7,8 +7,8 @@ import javax.validation.constraints.Size;
 @Table(name = "state")
 @NamedQueries({
         @NamedQuery(
-                name = "getStateById",
-                query = "select ut from StateEntity ut where ut.id = :stateId "),
+                name = "getStateByUUID",
+                query = "select ut from StateEntity ut where ut.uuid = :uuid "),
         @NamedQuery(
                 name = "getAllStates",
                 query = "select st from StateEntity st"
@@ -28,6 +28,14 @@ public class StateEntity {
     @Column(name = "state_name")
     @Size(max = 30)
     private String stateName;
+
+    public StateEntity(String stateUuid, String stateName) {
+        this.uuid = stateUuid;
+        this.stateName = stateName;
+    }
+
+    public StateEntity() {
+    }
 
     public Integer getId() {
         return id;

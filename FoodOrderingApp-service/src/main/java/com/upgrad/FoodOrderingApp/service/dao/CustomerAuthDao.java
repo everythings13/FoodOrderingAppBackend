@@ -17,7 +17,7 @@ public class CustomerAuthDao {
     public CustomerAuthEntity getCustomerAuthEntityByAccessToken(String accessToken) {
         try {
             return entityManager
-                    .createNamedQuery("customerAuthByAccessToken", CustomerAuthEntity.class)
+                    .createNamedQuery("customerByAuthtoken", CustomerAuthEntity.class)
                     .setParameter("accessToken", accessToken)
                     .getSingleResult();
         } catch (NoResultException ex) {
