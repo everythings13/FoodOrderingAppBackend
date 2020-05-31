@@ -45,6 +45,7 @@ public class RestaurantService {
     return restaurantDao.getRestaurantByCategoryId(categoryID);
   }
 
+  /** @return list of restaurants by restaurantUuid */
   public Restaurant getRestaurantByRestaurantUuid(String restaurantUuid) {
     return restaurantDao.getRestaurantByRestaurantUuid(restaurantUuid);
   }
