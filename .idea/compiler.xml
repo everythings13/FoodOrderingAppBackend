@@ -13,6 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FoodOrderingApp-api" target="1.8" />
+      <module name="FoodOrderingApp-Backend" target="1.8" />
       <module name="FoodOrderingApp-db" target="1.8" />
       <module name="FoodOrderingApp-service" target="1.8" />
       <module name="FoodOrderingAppBackend" target="1.8" />
