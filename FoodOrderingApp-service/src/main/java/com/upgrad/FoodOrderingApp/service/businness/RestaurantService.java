@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.businness;
 import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
 import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantCategory;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.apache.logging.log4j.util.Strings;
@@ -21,10 +22,12 @@ public class RestaurantService {
   private static final int SCALE = 2;
   private static final int FIVE = 5;
   private final RestaurantDao restaurantDao;
+  private final CustomerService customerService;
 
   @Autowired
-  public RestaurantService(RestaurantDao restaurantDao) {
+  public RestaurantService(RestaurantDao restaurantDao, CustomerService customerService) {
     this.restaurantDao = restaurantDao;
+    this.customerService = customerService;
   }
 
   /** @return list of restaurants */
@@ -49,11 +52,11 @@ public class RestaurantService {
   @Transactional
   public Restaurant updateCustomerRating(
       Double customerRating, String restaurant_id, String authorizationToken)
-      throws RestaurantNotFoundException, InvalidRatingException {
+      throws RestaurantNotFoundException, InvalidRatingException, AuthorizationFailedException {
+    customerService.getCustomer(authorizationToken);
     if (Strings.isEmpty(restaurant_id) || restaurant_id.equalsIgnoreCase("\"\"")) {
       throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
     }
-
     Restaurant restaurantByRestaurantUuid =
         restaurantDao.getRestaurantByRestaurantUuid(restaurant_id);
 

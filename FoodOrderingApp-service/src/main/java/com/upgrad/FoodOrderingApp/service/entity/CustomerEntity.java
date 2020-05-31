@@ -83,7 +83,7 @@ public class CustomerEntity {
     }
 
     public void setLastName(String lastname) {
-        this.lastName = lastName;
+        this.lastName = lastname;
     }
 
     public String getEmail() {
