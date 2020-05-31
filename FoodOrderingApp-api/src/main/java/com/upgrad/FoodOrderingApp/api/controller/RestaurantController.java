@@ -2,30 +2,32 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.RestaurantDetailsResponse;
 import com.upgrad.FoodOrderingApp.api.model.RestaurantListResponse;
+import com.upgrad.FoodOrderingApp.api.model.RestaurantUpdatedResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantCategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.entity.Category;
 import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantCategory;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/restaurant")
 public class RestaurantController {
 
@@ -104,18 +106,34 @@ public class RestaurantController {
       throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
     }
     Restaurant restaurant = restaurantService.getRestaurantByRestaurantUuid(restaurant_id);
-
     if (Objects.isNull(restaurant)) {
       throw new RestaurantNotFoundException("RNF-001", "No restaurant by this id");
     }
-//    List<Restaurant> listOfRestaurants =
-//        restaurantService.getRestaurantByCategoryId(category.getId()).stream()
-//            .map(RestaurantCategory::getRestaurant)
-//            .sorted(Comparator.comparing(Restaurant::getRestaurantName))
-//            .collect(Collectors.toList());
-
     return new ResponseEntity<>(
-        RestaurantControllerReponseUtil.getRestaurantDetailsResponse(restaurant),
-        HttpStatus.OK);
+        RestaurantControllerReponseUtil.getRestaurantDetailsResponse(restaurant), HttpStatus.OK);
   }
+//
+//  @RequestMapping(
+//      method = RequestMethod.PUT,
+//      path = "/restaurant/{restaurant_id}",
+//      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+//      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//  public ResponseEntity<RestaurantUpdatedResponse> updateCustomerRating(
+//      @RequestHeader("authorization") final String authorization,
+//      @RequestParam Double customerRating,
+//      @PathVariable String restaurant_id)
+//      throws AuthorizationFailedException, InvalidRatingException, RestaurantNotFoundException {
+//    String[] bearerToken = authorization.split("Bearer ");
+//    Restaurant restaurantEntity =
+//        restaurantService.updateCustomerRating(customerRating, restaurant_id, bearerToken[1]);
+//
+//    // Attach the details to the updateResponse
+//    RestaurantUpdatedResponse restaurantUpdatedResponse =
+//        new RestaurantUpdatedResponse()
+//            .id(UUID.fromString(restaurantEntity.getUuid()))
+//            .status("RESTAURANT RATING UPDATED SUCCESSFULLY");
+//
+//    // Returns the RestaurantUpdatedResponse with OK http status
+//    return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
+//  }
 }

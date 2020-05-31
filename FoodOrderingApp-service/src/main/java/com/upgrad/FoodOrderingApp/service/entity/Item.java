@@ -6,25 +6,23 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "item")
-@NamedQueries({
-  @NamedQuery(name = "itemByUuid", query = "select i from Item i where i.uuid=:uuid")
-})
+@NamedQueries({@NamedQuery(name = "itemByUuid", query = "select i from Item i where i.uuid=:uuid")})
 public class Item {
   @Id
-  @Column(name = "ID")
+  @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(name = "UUID")
+  @Column(name = "uuid")
   @Size(max = 200)
   private String uuid;
 
-  @Column(name = "ITEM_NAME")
+  @Column(name = "item_name")
   @NotNull
   @Size(max = 30)
   private String itemName;
 
-  @Column(name = "PRICE")
+  @Column(name = "price")
   @NotNull
   private int price;
 
@@ -62,7 +60,7 @@ public class Item {
     this.price = price;
   }
 
-  public  String getType() {
+  public String getType() {
     return type;
   }
 
