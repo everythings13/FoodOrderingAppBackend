@@ -84,7 +84,7 @@ public CustomerAuthEntity authenticate(String contactnumber, String password) th
     }
     else
         {
-            throw new AuthenticationFailedException(ATH_001, THIS_CONTACT_NUMBER_IS_ALREADY_REGISTERED);
+            throw new AuthenticationFailedException(ATH_001, THIS_CONTACT_NUMBER_IS_NOT_REGISTERED);
         }
 
     return customerAuthToken;
