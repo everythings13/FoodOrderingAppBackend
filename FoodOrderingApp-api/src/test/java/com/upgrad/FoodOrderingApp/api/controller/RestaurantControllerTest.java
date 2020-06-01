@@ -60,7 +60,7 @@ public class RestaurantControllerTest {
     when(mockRestaurantService.getRestaurantByRestaurantUuid("someRestaurantId"))
         .thenReturn(restaurantEntity);
 
-    final Category categoryEntity = getCategoryEntity();
+    final CategoryEntity categoryEntity = getCategoryEntity();
     when(mockCategoryService.getCategoryNameByCategoryUuid("someRestaurantId"))
         .thenReturn(categoryEntity);
     mockMvc
@@ -123,7 +123,7 @@ public class RestaurantControllerTest {
     when(mockRestaurantService.getListOfRestaurantsByName("someRestaurantName"))
         .thenReturn(Collections.singletonList(restaurantEntity));
 
-    final Category categoryEntity = getCategoryEntity();
+    final CategoryEntity categoryEntity = getCategoryEntity();
     when(mockCategoryService.getCategoryNameByCategoryUuid(restaurantEntity.getUuid()))
         .thenReturn(categoryEntity);
 
@@ -488,8 +488,8 @@ public class RestaurantControllerTest {
     verify(mockRestaurantService, times(1)).updateCustomerRating(5.5, id, "database_accesstoken2");
   }
 
-  private Category getCategoryEntity() {
-    final Category categoryEntity = new Category();
+  private CategoryEntity getCategoryEntity() {
+    final CategoryEntity categoryEntity = new CategoryEntity();
     final String categoryId = UUID.randomUUID().toString();
     categoryEntity.setUuid(categoryId);
     categoryEntity.setCategoryName("someCategory");

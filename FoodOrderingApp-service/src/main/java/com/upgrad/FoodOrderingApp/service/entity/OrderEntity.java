@@ -3,8 +3,8 @@ package com.upgrad.FoodOrderingApp.service.entity;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -23,17 +23,17 @@ public class OrderEntity {
   private String uuid;
 
   @Column(name = "bill")
-  private BigDecimal bill;
+  private Double bill;
 
   @Column(name = "discount")
-  private BigDecimal discount;
+  private Double discount;
 
   @Column(name = "date")
-  private Timestamp date;
+  private Date date;
 
   @OneToOne
   @JoinColumn(name = "payment_id")
-  private OrderPayment payment;
+  private PaymentEntity payment;
 
   @OneToOne
   @JoinColumn(name="address_id")
@@ -41,11 +41,11 @@ public class OrderEntity {
 
   @OneToOne
   @JoinColumn(name = "restaurant_id")
-  private OrderRestaurantEntity restaurant;
+  private Restaurant restaurant;
 
   @OneToOne
   @JoinColumn(name = "coupon_id")
-  private OrderCouponEntity coupon;
+  private CouponEntity coupon;
 
   @OneToOne
   @JoinColumn(name="customer_id")
@@ -53,6 +53,10 @@ public class OrderEntity {
 
   @Transient
   private List<OrderItemEntity> itemQuantities = null;
+
+  public OrderEntity() {
+
+  }
 
   public Integer getId() {
     return id;
@@ -70,35 +74,35 @@ public class OrderEntity {
     this.uuid = uuid;
   }
 
-  public BigDecimal getBill() {
+  public Double getBill() {
     return bill;
   }
 
-  public void setBill(BigDecimal bill) {
+  public void setBill(Double bill) {
     this.bill = bill;
   }
 
-  public BigDecimal getDiscount() {
+  public Double getDiscount() {
     return discount;
   }
 
-  public void setDiscount(BigDecimal discount) {
+  public void setDiscount(Double discount) {
     this.discount = discount;
   }
 
-  public Timestamp getDate() {
+  public Date getDate() {
     return date;
   }
 
-  public void setDate(Timestamp date) {
+  public void setDate(Date date) {
     this.date = date;
   }
 
-  public OrderPayment getPayment() {
+  public PaymentEntity getPayment() {
     return payment;
   }
 
-  public void setPayment(OrderPayment payment) {
+  public void setPayment(PaymentEntity payment) {
     this.payment = payment;
   }
 
@@ -110,19 +114,19 @@ public class OrderEntity {
     this.address = address;
   }
 
-  public OrderRestaurantEntity getRestaurant() {
+  public Restaurant getRestaurant() {
     return restaurant;
   }
 
-  public void setRestaurant(OrderRestaurantEntity restaurant) {
+  public void setRestaurant(Restaurant restaurant) {
     this.restaurant = restaurant;
   }
 
-  public OrderCouponEntity getCoupon() {
+  public CouponEntity getCoupon() {
     return coupon;
   }
 
-  public void setCoupon(OrderCouponEntity coupon) {
+  public void setCoupon(CouponEntity coupon) {
     this.coupon = coupon;
   }
 
@@ -142,5 +146,17 @@ public class OrderEntity {
     this.itemQuantities = itemQuantities;
   }
 
+  public OrderEntity(String uuid, Double bill, CouponEntity coupon, Double discount, Date date, PaymentEntity payment, AddressEntity address, Restaurant restaurant, CustomerEntity customer) {
+    this.uuid = uuid;
+    this.bill = bill;
+    this.coupon = coupon;
+    this.discount = discount;
+    this.date = date;
+    this.payment = payment;
+    this.customer = customer;
+    this.address = address;
+    this.restaurant = restaurant;
 
+
+  }
 }

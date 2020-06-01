@@ -6,11 +6,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "Coupon")
 @NamedQueries({
-        @NamedQuery(name="getCouponDetails",query = "SELECT o FROM OrderCouponEntity o WHERE o.couponName =:couponName"),
-        @NamedQuery(name="getCouponDetailsByUUId",query = "SELECT o FROM OrderCouponEntity o WHERE o.uuid =:uuid"),
-        @NamedQuery(name="getCouponDetailsById",query = "SELECT o FROM OrderCouponEntity o WHERE o.id =:id")
+        @NamedQuery(name="getCouponDetails",query = "SELECT o FROM CouponEntity o WHERE o.couponName =:couponName"),
+        @NamedQuery(name="getCouponDetailsByUUId",query = "SELECT o FROM CouponEntity o WHERE o.uuid =:uuid"),
+        @NamedQuery(name="getCouponDetailsById",query = "SELECT o FROM CouponEntity o WHERE o.id =:id")
 })
-public class OrderCouponEntity {
+public class CouponEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +22,15 @@ public class OrderCouponEntity {
     @Column(name = "percent")
     private Integer percent ;
 
-   /*@OneToOne(mappedBy = "couponId"
-            )
-    private OrderEntity order;*/
+    public CouponEntity(String uuid, String couponName, Integer percent) {
+        this.uuid = uuid;
+        this.couponName = couponName;
+        this.percent = percent;
+    }
+
+    public CouponEntity() {
+
+    }
 
     public Integer getId() {
         return id;
@@ -65,5 +71,15 @@ public class OrderCouponEntity {
     public void setOrder(OrderEntity order) {
         this.order = order;
     }*/
+
+    @Override
+    public String toString() {
+        return "CouponEntity{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", couponName='" + couponName + '\'' +
+                ", percent=" + percent +
+                '}';
+    }
 }
 

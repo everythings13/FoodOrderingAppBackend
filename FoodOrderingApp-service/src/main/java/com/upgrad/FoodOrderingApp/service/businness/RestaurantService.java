@@ -46,8 +46,12 @@ public class RestaurantService {
   }
 
   /** @return list of restaurants by restaurantUuid */
-  public Restaurant getRestaurantByRestaurantUuid(String restaurantUuid) {
-    return restaurantDao.getRestaurantByRestaurantUuid(restaurantUuid);
+  public Restaurant getRestaurantByRestaurantUuid(String restaurantUuid) throws RestaurantNotFoundException {
+    Restaurant restaurant = restaurantDao.getRestaurantByRestaurantUuid(restaurantUuid);
+    if(restaurant==null){
+      throw new RestaurantNotFoundException("RNF-001", "No restaurant by this id");
+    }
+    return restaurant;
   }
 
   @Transactional

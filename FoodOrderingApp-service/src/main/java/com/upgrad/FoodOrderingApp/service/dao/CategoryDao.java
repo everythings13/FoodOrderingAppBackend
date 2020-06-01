@@ -28,7 +28,7 @@ public class CategoryDao {
         }
     }
 
-    public CategoryEntity getcategoryById(String uuid){
+    public CategoryEntity getcategoryByUUID(String uuid){
         try{
             CategoryEntity entity=
                     entityManager.createNamedQuery("getCategoryByUUID",CategoryEntity.class).setParameter("uuid",uuid).getSingleResult();
@@ -47,7 +47,7 @@ public class CategoryDao {
         return entityManager.createNamedQuery("getItemsByIds",ItemsEntity.class).setParameter("id",id).getResultList();
     }
 
-  public Category getCategoryByCategoryUuid(String uuid) {
+  /*public CategoryEntity getCategoryByCategoryUuid(String uuid) {
     try {
       return entityManager
           .createNamedQuery("getCategoryAttributesByUuid", Category.class)
@@ -56,5 +56,5 @@ public class CategoryDao {
     } catch (NoResultException noResultException) {
       return null;
     }
-  }
+  }*/
 }

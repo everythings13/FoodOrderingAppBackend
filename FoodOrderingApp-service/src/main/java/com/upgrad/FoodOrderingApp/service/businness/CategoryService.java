@@ -8,10 +8,8 @@ import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CategoryService {
@@ -24,7 +22,7 @@ public class CategoryService {
     }
 
     public CategoryEntity getCategoryById(String id) throws CategoryNotFoundException {
-        CategoryEntity category = categoryDao.getcategoryById(id);
+        CategoryEntity category = categoryDao.getcategoryByUUID(id);
         if(category==null){
             throw new CategoryNotFoundException("CNF-002", "No category by this id");
         }
@@ -46,7 +44,7 @@ public class CategoryService {
     }
 
   /** @return get category by category uuid */
-  public Category getCategoryNameByCategoryUuid(String categoryId) {
-    return categoryDao.getCategoryByCategoryUuid(categoryId);
+  public CategoryEntity getCategoryNameByCategoryUuid(String categoryId) {
+    return categoryDao.getcategoryByUUID(categoryId);
   }
 }

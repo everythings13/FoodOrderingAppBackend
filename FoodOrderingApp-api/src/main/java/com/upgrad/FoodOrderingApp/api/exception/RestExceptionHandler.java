@@ -61,12 +61,7 @@ public class RestExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<ErrorResponse> CategoryNotFoundException(CategoryNotFoundException exc) {
-        return new ResponseEntity<>(
-                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
-                HttpStatus.NOT_FOUND);
-    }
+
 
     @ExceptionHandler(InvalidRatingException.class)
     public ResponseEntity<ErrorResponse> InvalidRatingException(
@@ -74,5 +69,12 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
                 HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(PaymentMethodNotFoundException.class)
+    public ResponseEntity<ErrorResponse> PaymentMethodNotFoundException(
+            PaymentMethodNotFoundException exc) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
     }
 }
