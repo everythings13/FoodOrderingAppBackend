@@ -80,18 +80,24 @@ public class OrderController {
     for (OrderEntity orderEntity : orderList) {
       OrderList order = convertToOrderList(orderEntity);
       List<OrderItemEntity> items = orderService.getAllItemsByOrder(orderEntity.getId());
-      List<ItemQuantityResponse> itemQuantities = items.stream().map(itemsEntity -> {
-            ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse();
-            ItemQuantityResponseItem itemQuantityResponseItem = new ItemQuantityResponseItem();
-            itemQuantityResponseItem.setItemName(itemsEntity.getItemId().getItemName());
-            itemQuantityResponseItem.setId(UUID.fromString(itemsEntity.getItemId().getUuid()));
-            itemQuantityResponseItem.setItemPrice(itemsEntity.getItemId().getPrice());
-            itemQuantityResponseItem.setType(
-                ItemQuantityResponseItem.TypeEnum.valueOf(
-                    itemsEntity.getItemId().getType().toString()));
-            itemQuantityResponse.setItem(itemQuantityResponseItem);
-            return itemQuantityResponse;
-          }).collect(Collectors.toList());
+      List<ItemQuantityResponse> itemQuantities =
+          items.stream()
+              .map(
+                  itemsEntity -> {
+                    ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse();
+                    ItemQuantityResponseItem itemQuantityResponseItem =
+                        new ItemQuantityResponseItem();
+                    itemQuantityResponseItem.setItemName(itemsEntity.getItemId().getItemName());
+                    itemQuantityResponseItem.setId(
+                        UUID.fromString(itemsEntity.getItemId().getUuid()));
+                    itemQuantityResponseItem.setItemPrice(itemsEntity.getItemId().getPrice());
+                    itemQuantityResponseItem.setType(
+                        ItemQuantityResponseItem.TypeEnum.valueOf(
+                            itemsEntity.getItemId().getType().toString()));
+                    itemQuantityResponse.setItem(itemQuantityResponseItem);
+                    return itemQuantityResponse;
+                  })
+              .collect(Collectors.toList());
       order.setItemQuantities(itemQuantities);
       orders.add(order);
     }
@@ -131,7 +137,8 @@ public class OrderController {
       OrderEntity orderEntity = getOrderListEntity(orderRequest, customer);
       order = orderService.saveOrder(orderEntity);
       OrderEntity finalOrder = order;
-      orderRequest.getItemQuantities()
+      orderRequest
+          .getItemQuantities()
           .forEach(
               itemQuantity -> {
                 OrderItemEntity orderItemEntity = new OrderItemEntity();
@@ -164,10 +171,10 @@ public class OrderController {
     AddressEntity addressEntity = new AddressEntity();
     addressEntity.setUuid(orderRequest.getAddressId());
     order.setAddress(addressEntity);
-
-    CouponEntity couponEntity =
-            orderService.getCouponByCouponName(orderRequest.getCouponId().toString());
-    order.setCoupon(couponEntity);
+    CouponEntity couponDetails = orderService.getCouponDetailsByUUid(orderRequest.getCouponId().toString());
+   /* CouponEntity couponEntity =
+        orderService.getCouponByCouponName(orderRequest.getCouponId().toString());*/
+    order.setCoupon(couponDetails);
     PaymentEntity paymentDetails =
         paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());
     order.setPayment(paymentDetails);

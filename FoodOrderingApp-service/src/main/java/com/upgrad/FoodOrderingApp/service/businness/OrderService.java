@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.NoResultException;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.upgrad.FoodOrderingApp.service.util.MessageKeys.*;
 
@@ -108,9 +109,10 @@ public class OrderService {
     return coupon;
   }
 
-  public List<OrderEntity> getOrdersByCustomers(String accessToken)
+  public List<OrderEntity> getOrdersByCustomers(String customerId)
       throws AuthorizationFailedException {
-    CustomerEntity customerDetails = validateCustomerAuth(accessToken);
+    CustomerEntity customerDetails =orderDao.getCustomerByUUId(customerId);
+   /* CustomerEntity customerDetails = validateCustomerAuth(accessToken);*/
     return getOrdersByCustomers(customerDetails);
   }
 

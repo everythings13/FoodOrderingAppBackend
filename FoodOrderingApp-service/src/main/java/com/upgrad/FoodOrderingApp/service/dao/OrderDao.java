@@ -142,7 +142,7 @@ public class OrderDao {
   }
 
   @Transactional
-  public CustomerEntity getCustomerByUUId(UUID uuid) {
+  public CustomerEntity getCustomerByUUId(String uuid) {
     try {
       return entityManager
           .createNamedQuery("customerByUuid", CustomerEntity.class)
