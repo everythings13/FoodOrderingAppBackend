@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Table(name = "address")
 @NamedQueries({
         @NamedQuery(
-                name = "getAddressById",
+                name = "getAddressByUUID",
                 query = "Select ae from AddressEntity ae where ae.uuid = :uuid"
         )}
 )
@@ -42,7 +42,7 @@ public class AddressEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "state_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private StateEntity stateEntity;
+    private State stateEntity;
 
     public Integer getId() {
         return id;
@@ -56,11 +56,11 @@ public class AddressEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getFlatBuildingName() {
+    public String getFlatBuilNo() {
         return flatBuildingName;
     }
 
-    public void setFlatBuildingName(String flatBuildingName) {
+    public void setFlatBuilNo(String flatBuildingName) {
         this.flatBuildingName = flatBuildingName;
     }
 
@@ -88,11 +88,11 @@ public class AddressEntity implements Serializable {
         this.pincode = pincode;
     }
 
-    public StateEntity getStateEntity() {
+    public State getStateEntity() {
         return stateEntity;
     }
 
-    public void setStateEntity(StateEntity stateEntity) {
+    public void setState(State stateEntity) {
         this.stateEntity = stateEntity;
     }
 }
