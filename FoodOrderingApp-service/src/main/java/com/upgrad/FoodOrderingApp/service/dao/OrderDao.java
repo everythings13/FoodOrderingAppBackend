@@ -232,4 +232,13 @@ public class OrderDao {
         .setParameter("uuid", uuid)
         .getResultList();
   }
+
+  public List<OrderEntity> getOrdersByRestaurant(Restaurant restaurantEntity){
+    try{
+      List<OrderEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByRestaurant",OrderEntity.class).setParameter("restaurant",restaurantEntity).getResultList();
+      return ordersEntities;
+    }catch (NoResultException nre){
+      return null;
+    }
+  }
 }

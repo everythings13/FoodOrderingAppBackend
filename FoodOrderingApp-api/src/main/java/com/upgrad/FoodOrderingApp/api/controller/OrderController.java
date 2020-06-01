@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /** @Author : Harika Etamukkala OrderController */
+@CrossOrigin
 @RestController
 public class OrderController {
 
