@@ -22,9 +22,9 @@ public class OrderCouponEntity {
     @Column(name = "percent")
     private Integer percent ;
 
-/*    @OneToOne(mappedBy = "coupon",cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private OrderListEntity order;*/
+   /*@OneToOne(mappedBy = "couponId"
+            )
+    private OrderEntity order;*/
 
     public Integer getId() {
         return id;
@@ -58,11 +58,11 @@ public class OrderCouponEntity {
         this.uuid = uuid;
     }
 /*
-    public OrderListEntity getOrder() {
+    public OrderEntity getOrder() {
         return order;
     }
 
-    public void setOrder(OrderListEntity order) {
+    public void setOrder(OrderEntity order) {
         this.order = order;
     }*/
 }

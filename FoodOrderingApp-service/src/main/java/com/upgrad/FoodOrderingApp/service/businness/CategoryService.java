@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class CategoryBusinessService {
+public class CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 

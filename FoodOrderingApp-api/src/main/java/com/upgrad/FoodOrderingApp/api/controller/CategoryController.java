@@ -3,7 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.CategoryDetailsResponse;
 import com.upgrad.FoodOrderingApp.api.model.CategoryListResponse;
 import com.upgrad.FoodOrderingApp.api.model.ItemList;
-import com.upgrad.FoodOrderingApp.service.businness.CategoryBusinessService;
+import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemsEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
@@ -22,11 +22,11 @@ import java.util.UUID;
 @RestController
 public class CategoryController {
 
-  @Autowired private CategoryBusinessService categoryBusinessService;
+  @Autowired private CategoryService categoryService;
 
   @RequestMapping(method = RequestMethod.GET, path = "/category")
   public ResponseEntity<List<CategoryListResponse>> getCategories() {
-    List<CategoryEntity> categories = categoryBusinessService.getAllCategories();
+    List<CategoryEntity> categories = categoryService.getAllCategories();
     List<CategoryListResponse> categoryListResponses = getCategoryListResponses(categories);
     return new ResponseEntity<List<CategoryListResponse>>(categoryListResponses, HttpStatus.OK);
   }
@@ -37,8 +37,8 @@ public class CategoryController {
     if (categoryId == null) {
       throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
     }
-    CategoryEntity categoryDetails = categoryBusinessService.getCategoryById(categoryId);
-    List<ItemsEntity> itemDetails = categoryBusinessService.getItems(categoryDetails.getId());
+    CategoryEntity categoryDetails = categoryService.getCategoryById(categoryId);
+    List<ItemsEntity> itemDetails = categoryService.getItems(categoryDetails.getId());
     CategoryDetailsResponse response = getCategoryDetailsResponse(categoryDetails, itemDetails);
 
     return new ResponseEntity<>(response, HttpStatus.OK);
@@ -67,7 +67,7 @@ public class CategoryController {
           .forEach(
               itemsEntity -> {
                 ItemList item = new ItemList();
-                item.setId(itemsEntity.getUuid());
+                item.setId(UUID.fromString(itemsEntity.getUuid()));
                 item.setItemName(itemsEntity.getItemName());
                 item.setPrice(itemsEntity.getPrice());
                 item.setItemType(ItemList.ItemTypeEnum.fromValue(itemsEntity.getType()));

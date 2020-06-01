@@ -42,7 +42,7 @@ public class OrderRestaurantEntity {
   private BigInteger addressId;
 
 /*  @OneToOne(mappedBy = "restaurant")
-  private OrderListEntity order;*/
+  private OrderEntity order;*/
 
   public BigInteger getId() {
     return id;
@@ -108,11 +108,11 @@ public class OrderRestaurantEntity {
     this.addressId = addressId;
   }
 
- /* public OrderListEntity getOrder() {
+ /* public OrderEntity getOrder() {
     return order;
   }
 
-  public void setOrder(OrderListEntity order) {
+  public void setOrder(OrderEntity order) {
     this.order = order;
   }*/
 }

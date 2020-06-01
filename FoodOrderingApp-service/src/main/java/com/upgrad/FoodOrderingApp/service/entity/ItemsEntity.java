@@ -7,14 +7,14 @@ import java.util.UUID;
 @Entity
 @Table(name = "item")
 @NamedQueries({
-        @NamedQuery(name = "getItemsByIds",query = "SELECT it from ItemsEntity it WHERE it.id IN (:id)")
+        @NamedQuery(name = "getItemsByIds",query = "SELECT it from ItemsEntity it WHERE it.uuid =:uuid")
 })
 public class ItemsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "uuid")
-    private UUID uuid;
+    private String uuid;
     @Column(name = "item_name")
     private String itemName;
     @Column(name = "price")
@@ -22,19 +22,20 @@ public class ItemsEntity {
     @Column(name = "type")
     private  String type;
 
-    public BigInteger getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 

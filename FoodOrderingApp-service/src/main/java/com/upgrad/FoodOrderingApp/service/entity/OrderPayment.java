@@ -8,14 +8,14 @@ import java.math.BigInteger;
 @NamedQueries({
         @NamedQuery(
                 name = "getPaymentByUUId",
-                query = "Select p from OrderListPayment p where p.uuid = :uuid"
+                query = "Select p from OrderPayment p where p.uuid = :uuid"
         ),
         @NamedQuery(
                 name = "getPaymentById",
-                query = "Select p from OrderListPayment p where p.id = :id"
+                query = "Select p from OrderPayment p where p.id = :id"
         )}
 )
-public class OrderListPayment {
+public class OrderPayment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -27,7 +27,7 @@ public class OrderListPayment {
   private String paymentName;
 
  /* @OneToOne(mappedBy = "payment")
-  private OrderListEntity order;*/
+  private OrderEntity order;*/
 
   public Integer getId() {
     return id;
@@ -45,11 +45,11 @@ public class OrderListPayment {
     this.paymentName = paymentName;
   }
 
-/*  public OrderListEntity getOrder() {
+/*  public OrderEntity getOrder() {
     return order;
   }
 
-  public void setOrder(OrderListEntity order) {
+  public void setOrder(OrderEntity order) {
     this.order = order;
   }*/
 
