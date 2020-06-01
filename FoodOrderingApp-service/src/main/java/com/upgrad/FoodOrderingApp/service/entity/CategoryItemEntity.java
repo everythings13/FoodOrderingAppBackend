@@ -11,33 +11,33 @@ import java.math.BigInteger;
 public class CategoryItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "item_id")
-    private BigInteger itemId;
+    private Integer itemId;
     @Column(name = "category_id")
-    private BigInteger categoryId;
+    private Integer categoryId;
 
-    public BigInteger getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public BigInteger getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(BigInteger itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 
-    public BigInteger getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(BigInteger categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 }

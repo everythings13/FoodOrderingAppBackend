@@ -1,13 +1,17 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import com.upgrad.FoodOrderingApp.service.common.ItemType;
+
 import javax.persistence.*;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "item")
 @NamedQueries({
-        @NamedQuery(name = "getItemsByIds",query = "SELECT it from ItemsEntity it WHERE it.uuid =:uuid")
+        @NamedQuery(name = "getItemsByUUID",query = "SELECT it from ItemsEntity it WHERE it.uuid =:uuid"),
+        @NamedQuery(name = "getItemsByIds",query = "SELECT it from ItemsEntity it WHERE it.id IN :id")
 })
 public class ItemsEntity {
     @Id
@@ -20,8 +24,10 @@ public class ItemsEntity {
     @Column(name = "price")
     private Integer price;
     @Column(name = "type")
-    private  String type;
+    private ItemType type;
 
+/*
+    private CategoryEntity categoryEntity;*/
 
     public Integer getId() {
         return id;
@@ -55,11 +61,19 @@ public class ItemsEntity {
         this.price = price;
     }
 
-    public String getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
+/*
+    public CategoryEntity getCategoryEntity() {
+        return categoryEntity;
+    }
+
+    public void setCategoryEntity(CategoryEntity categoryEntity) {
+        this.categoryEntity = categoryEntity;
+    }*/
 }

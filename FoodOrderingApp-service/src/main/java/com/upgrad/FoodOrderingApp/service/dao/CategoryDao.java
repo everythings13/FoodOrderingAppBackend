@@ -38,11 +38,11 @@ public class CategoryDao {
 
     }
 
-    public List<CategoryItemEntity> getCategoryItems(BigInteger categoryId){
+    public List<CategoryItemEntity> getCategoryItems(Integer categoryId){
         return entityManager.createNamedQuery("getItems",CategoryItemEntity.class).setParameter("categoryId",categoryId).getResultList();
     }
 
-    public List<ItemsEntity> getItemsByItemIds(List<BigInteger> id){
+    public List<ItemsEntity> getItemsByItemIds(List<Integer> id){
         return entityManager.createNamedQuery("getItemsByIds",ItemsEntity.class).setParameter("id",id).getResultList();
     }
 }

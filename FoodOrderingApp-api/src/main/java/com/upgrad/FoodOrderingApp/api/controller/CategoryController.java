@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
+import com.upgrad.FoodOrderingApp.api.model.CategoriesListResponse;
 import com.upgrad.FoodOrderingApp.api.model.CategoryDetailsResponse;
 import com.upgrad.FoodOrderingApp.api.model.CategoryListResponse;
 import com.upgrad.FoodOrderingApp.api.model.ItemList;
@@ -25,10 +26,10 @@ public class CategoryController {
   @Autowired private CategoryService categoryService;
 
   @RequestMapping(method = RequestMethod.GET, path = "/category")
-  public ResponseEntity<List<CategoryListResponse>> getCategories() {
-    List<CategoryEntity> categories = categoryService.getAllCategories();
-    List<CategoryListResponse> categoryListResponses = getCategoryListResponses(categories);
-    return new ResponseEntity<List<CategoryListResponse>>(categoryListResponses, HttpStatus.OK);
+  public ResponseEntity<CategoriesListResponse> getCategories() {
+    List<CategoryEntity> categories = categoryService.getAllCategoriesOrderedByName();
+    CategoriesListResponse categoryListResponses = getCategoryListResponses(categories);
+    return new ResponseEntity<>(categoryListResponses, HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}")
@@ -38,39 +39,50 @@ public class CategoryController {
       throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
     }
     CategoryEntity categoryDetails = categoryService.getCategoryById(categoryId);
-    List<ItemsEntity> itemDetails = categoryService.getItems(categoryDetails.getId());
-    CategoryDetailsResponse response = getCategoryDetailsResponse(categoryDetails, itemDetails);
+      List<ItemsEntity> itemDetails = new ArrayList<>();
+      if(categoryDetails.getId()!=null) {
+        itemDetails = categoryService.getItems(categoryDetails.getId());
+        categoryDetails.setItems(itemDetails);
+    }
+
+    CategoryDetailsResponse response = getCategoryDetailsResponse(categoryDetails);
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  private List<CategoryListResponse> getCategoryListResponses(List<CategoryEntity> categories) {
-    List<CategoryListResponse> categoryListResponses = new ArrayList<>();
-    if (categories != null) {
-      categories.stream()
-          .forEach(
-              categoryEntity -> {
-                CategoryListResponse response = new CategoryListResponse();
-                response.setCategoryName(categoryEntity.getCategoryName());
-                response.setId(UUID.fromString(categoryEntity.getUuid()));
-                categoryListResponses.add(response);
-              });
+  private CategoriesListResponse getCategoryListResponses(List<CategoryEntity> categories) {
+      CategoriesListResponse categoriesListResponses = new CategoriesListResponse();
+    if (categories != null && categories.size()>0) {
+
+        List<CategoryListResponse> listResponses = new ArrayList<>();
+        categories.stream()
+                .forEach(
+                        categoryEntity -> {
+                            CategoryListResponse response = new CategoryListResponse();
+                            response.setCategoryName(categoryEntity.getCategoryName());
+                            response.setId(UUID.fromString(categoryEntity.getUuid()));
+                            listResponses.add(response);
+                        });
+
+        categoriesListResponses.setCategories(listResponses);
+    }else{
+        categoriesListResponses.setCategories(null);
     }
-    return categoryListResponses;
+    return categoriesListResponses;
   }
 
   private CategoryDetailsResponse getCategoryDetailsResponse(
-      CategoryEntity categoryDetails, List<ItemsEntity> itemDetails) {
+      CategoryEntity categoryDetails) {
     CategoryDetailsResponse response = new CategoryDetailsResponse();
-    if (itemDetails != null) {
-      itemDetails.stream()
+    if (categoryDetails.getItems() != null) {
+        categoryDetails.getItems().stream()
           .forEach(
               itemsEntity -> {
                 ItemList item = new ItemList();
                 item.setId(UUID.fromString(itemsEntity.getUuid()));
                 item.setItemName(itemsEntity.getItemName());
                 item.setPrice(itemsEntity.getPrice());
-                item.setItemType(ItemList.ItemTypeEnum.fromValue(itemsEntity.getType()));
+                item.setItemType(ItemList.ItemTypeEnum.valueOf(itemsEntity.getType().toString()));
                 response.addItemListItem(item);
               });
     }

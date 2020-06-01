@@ -18,7 +18,7 @@ public class CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 
-    public List<CategoryEntity> getAllCategories(){
+    public List<CategoryEntity> getAllCategoriesOrderedByName(){
         List<CategoryEntity> categories= categoryDao.getAllCategories();
         return categories;
     }
@@ -31,11 +31,11 @@ public class CategoryService {
         return category;
     }
 
-    public List<ItemsEntity> getItems (BigInteger categoryId){
+    public List<ItemsEntity> getItems (Integer categoryId){
         List<CategoryItemEntity> items=categoryDao.getCategoryItems(categoryId);
         List<ItemsEntity> itemDetailsList = new ArrayList<>();
         if(items!=null && items.size()>0){
-            List<BigInteger> itemIds = new ArrayList<>();
+            List<Integer> itemIds = new ArrayList<>();
             items.stream().forEach(item ->{
                itemIds.add(item.getItemId());
             });

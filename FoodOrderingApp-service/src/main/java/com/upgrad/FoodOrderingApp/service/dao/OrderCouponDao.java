@@ -185,7 +185,7 @@ public class OrderCouponDao {
       uuid.add(item.getUuid());
     });*/
     try{
-      ItemsEntity itemEntity=entityManager.createNamedQuery("getItemsByIds",ItemsEntity.class).setParameter("uuid",itemId).getSingleResult();
+      ItemsEntity itemEntity=entityManager.createNamedQuery("getItemsByUUID",ItemsEntity.class).setParameter("uuid",itemId).getSingleResult();
       return itemEntity;
     }catch (NoResultException ex){
       return null;
@@ -203,6 +203,6 @@ public class OrderCouponDao {
     items.stream().forEach(item->{
       uuid.add(item.getItemId().getUuid());
     });
-    return entityManager.createNamedQuery("getItemsByIds",ItemsEntity.class).setParameter("uuid",uuid).getResultList();
+    return entityManager.createNamedQuery("getItemsByUUID",ItemsEntity.class).setParameter("uuid",uuid).getResultList();
   }
 }

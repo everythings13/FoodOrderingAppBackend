@@ -75,8 +75,8 @@ public class OrderController {
                 itemQuantityResponseItem.setItemName(itemsEntity.getItemId().getItemName());
                 itemQuantityResponseItem.setId(UUID.fromString(itemsEntity.getItemId().getUuid()));
                 itemQuantityResponseItem.setItemPrice(itemsEntity.getItemId().getPrice());
-                ItemQuantityResponseItem.TypeEnum value = ItemQuantityResponseItem.TypeEnum.values()[Integer.valueOf(itemsEntity.getItemId().getType())];
-                itemQuantityResponseItem.setType(value);
+//                ItemQuantityResponseItem.TypeEnum value = ItemQuantityResponseItem.TypeEnum.values()[Integer.valueOf(itemsEntity.getItemId().getType())];
+                itemQuantityResponseItem.setType(ItemQuantityResponseItem.TypeEnum.valueOf(itemsEntity.getItemId().getType().toString()));
                 itemQuantityResponse.setItem(itemQuantityResponseItem);
                 itemQuantities.add(itemQuantityResponse);
             });

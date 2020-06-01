@@ -4,11 +4,12 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigInteger;
+import java.util.List;
 
 @Entity
 @Table(name = "category")
 @NamedQueries({
-  @NamedQuery(name = "getAllCategories", query = "SELECT c from CategoryEntity c "),
+  @NamedQuery(name = "getAllCategories", query = "SELECT c from CategoryEntity c ORDER BY c.categoryName"),
   @NamedQuery(
       name = "getCategoryByUUID",
       query = "SELECT c from CategoryEntity c WHERE c.uuid =:uuid ")
@@ -16,7 +17,7 @@ import java.math.BigInteger;
 public class CategoryEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private BigInteger id;
+  private Integer id;
 
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid")
@@ -25,12 +26,14 @@ public class CategoryEntity {
 
   @Column(name = "category_name")
   private String categoryName;
+  @Transient
+  private List<ItemsEntity> items;
 
-  public BigInteger getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(BigInteger id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -50,4 +53,11 @@ public class CategoryEntity {
     this.uuid = uuid;
   }
 
+  public List<ItemsEntity> getItems() {
+    return items;
+  }
+
+  public void setItems(List<ItemsEntity> items) {
+    this.items = items;
+  }
 }
