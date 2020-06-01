@@ -1,10 +1,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.businness.OrderService;
-import com.upgrad.FoodOrderingApp.service.businness.PaymentService;
-import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.businness.*;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.*;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /** @Author : Harika Etamukkala OrderController */
+@CrossOrigin
 @RestController
 public class OrderController {
 
@@ -33,6 +31,7 @@ public class OrderController {
   @Autowired private CustomerService customerService;
   @Autowired private PaymentService paymentService;
   @Autowired private RestaurantService restaurantService;
+  @Autowired private AddressService addressService;
   /**
    * This Method is used to retrieve coupon details
    *
@@ -80,24 +79,18 @@ public class OrderController {
     for (OrderEntity orderEntity : orderList) {
       OrderList order = convertToOrderList(orderEntity);
       List<OrderItemEntity> items = orderService.getAllItemsByOrder(orderEntity.getId());
-      List<ItemQuantityResponse> itemQuantities =
-          items.stream()
-              .map(
-                  itemsEntity -> {
-                    ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse();
-                    ItemQuantityResponseItem itemQuantityResponseItem =
-                        new ItemQuantityResponseItem();
-                    itemQuantityResponseItem.setItemName(itemsEntity.getItemId().getItemName());
-                    itemQuantityResponseItem.setId(
-                        UUID.fromString(itemsEntity.getItemId().getUuid()));
-                    itemQuantityResponseItem.setItemPrice(itemsEntity.getItemId().getPrice());
-                    itemQuantityResponseItem.setType(
-                        ItemQuantityResponseItem.TypeEnum.valueOf(
-                            itemsEntity.getItemId().getType().toString()));
-                    itemQuantityResponse.setItem(itemQuantityResponseItem);
-                    return itemQuantityResponse;
-                  })
-              .collect(Collectors.toList());
+      List<ItemQuantityResponse> itemQuantities = items.stream().map(itemsEntity -> {
+            ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse();
+            ItemQuantityResponseItem itemQuantityResponseItem = new ItemQuantityResponseItem();
+            itemQuantityResponseItem.setItemName(itemsEntity.getItemId().getItemName());
+            itemQuantityResponseItem.setId(UUID.fromString(itemsEntity.getItemId().getUuid()));
+            itemQuantityResponseItem.setItemPrice(itemsEntity.getItemId().getPrice());
+            itemQuantityResponseItem.setType(
+                ItemQuantityResponseItem.TypeEnum.valueOf(
+                    itemsEntity.getItemId().getType().toString()));
+            itemQuantityResponse.setItem(itemQuantityResponseItem);
+            return itemQuantityResponse;
+          }).collect(Collectors.toList());
       order.setItemQuantities(itemQuantities);
       orders.add(order);
     }
@@ -132,13 +125,13 @@ public class OrderController {
           RestaurantNotFoundException, AddressNotFoundException, ItemNotFoundException {
     String token = getToken(accessToken);
     CustomerEntity customer = customerService.getCustomer(token);
+
     OrderEntity order = new OrderEntity();
     if (customer != null) {
       OrderEntity orderEntity = getOrderListEntity(orderRequest, customer);
       order = orderService.saveOrder(orderEntity);
       OrderEntity finalOrder = order;
-      orderRequest
-          .getItemQuantities()
+      orderRequest.getItemQuantities()
           .forEach(
               itemQuantity -> {
                 OrderItemEntity orderItemEntity = new OrderItemEntity();
@@ -168,16 +161,17 @@ public class OrderController {
     order.setDiscount(orderRequest.getDiscount().doubleValue());
     order.setDate(new Timestamp(new Date().getTime()));
     order.setCustomer(customer);
-    AddressEntity addressEntity = new AddressEntity();
-    addressEntity.setUuid(orderRequest.getAddressId());
-    order.setAddress(addressEntity);
-    CouponEntity couponDetails = orderService.getCouponDetailsByUUid(orderRequest.getCouponId().toString());
-   /* CouponEntity couponEntity =
-        orderService.getCouponByCouponName(orderRequest.getCouponId().toString());*/
-    order.setCoupon(couponDetails);
+    CouponEntity couponEntity =
+            orderService.getCouponByCouponName(orderRequest.getCouponId().toString());
+    order.setCoupon(couponEntity);
     PaymentEntity paymentDetails =
-        paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());
+            paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());
     order.setPayment(paymentDetails);
+    AddressEntity addressEntity = addressService.getAddressByUUID(orderRequest.getAddressId(),customer);;
+    //addressEntity.setUuid(orderRequest.getAddressId());
+    order.setAddress(addressEntity);
+
+
     Restaurant restaurantEntity =
         restaurantService.getRestaurantByRestaurantUuid(orderRequest.getRestaurantId().toString());
     order.setRestaurant(restaurantEntity);

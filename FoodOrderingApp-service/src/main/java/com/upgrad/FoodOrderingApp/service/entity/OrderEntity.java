@@ -12,7 +12,8 @@ import java.util.List;
   @NamedQuery(
       name = "getAllOrdersByCustomerId",
       query =
-          "SELECT o FROM OrderEntity o WHERE o.customer.id =:customerId")
+          "SELECT o FROM OrderEntity o WHERE o.customer.id =:customerId"),
+        @NamedQuery(name = "getOrdersByRestaurant",query = "SELECT o FROM OrderEntity o WHERE o.restaurant = :restaurant")
 })
 public class OrderEntity {
   @Id

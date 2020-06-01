@@ -70,7 +70,6 @@ public class RestExceptionHandler {
                 new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
                 HttpStatus.BAD_REQUEST);
     }
-    
     @ExceptionHandler(PaymentMethodNotFoundException.class)
     public ResponseEntity<ErrorResponse> PaymentMethodNotFoundException(
             PaymentMethodNotFoundException exc) {

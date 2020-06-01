@@ -44,6 +44,18 @@ public class AddressEntity implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private State stateEntity;
 
+    public AddressEntity(String addressId, String s, String someLocality, String someCity, String s1, State stateEntity) {
+        this.uuid = addressId;
+        this.flatBuildingName = s;
+        this.locality = someLocality;
+        this.city = someCity;
+        this.pincode = s1;
+        this.stateEntity = stateEntity;
+    }
+
+    public AddressEntity() {
+    }
+
     public Integer getId() {
         return id;
     }
