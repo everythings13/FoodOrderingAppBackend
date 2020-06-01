@@ -38,4 +38,18 @@ public class CustomerAddressDao {
             return null;
         }
     }
+
+    public CustomerAddressEntity saveCustomerAddress(CustomerAddressEntity customerAddressEntity){
+        entityManager.persist(customerAddressEntity);
+        return customerAddressEntity;
+    }
+
+    public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity){
+        try {
+            CustomerAddressEntity customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress",CustomerAddressEntity.class).setParameter("address_entity",addressEntity).getSingleResult();
+            return customerAddressEntity;
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
 }

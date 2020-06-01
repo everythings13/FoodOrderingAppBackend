@@ -39,9 +39,10 @@ public class AddressDao {
 
     @Transactional
     @Modifying
-    public void deleteAddress(AddressEntity addressEntity)
+    public AddressEntity deleteAddress(AddressEntity addressEntity)
     {
         entityManager.remove(addressEntity);
+        return addressEntity;
     }
 
 }

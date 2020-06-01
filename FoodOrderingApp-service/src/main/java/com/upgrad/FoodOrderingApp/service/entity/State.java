@@ -12,13 +12,13 @@ import java.util.UUID;
 @NamedQueries({
         @NamedQuery(
                 name = "getStateByUUID",
-                query = "select ut from StateEntity ut where ut.uuid = :uuid "),
+                query = "select ut from State ut where ut.uuid = :uuid "),
         @NamedQuery(
                 name = "getAllStates",
-                query = "select st from StateEntity st"
+                query = "select st from State st"
         )
 })
-public class StateEntity {
+public class State {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,12 @@ public class StateEntity {
     @Size(max = 30)
     private String stateName;
 
-    public StateEntity(String stateUuid, String stateName) {
+    public State(String stateUuid, String stateName) {
         this.uuid = stateUuid;
         this.stateName = stateName;
     }
 
-    public StateEntity() {
+    public State() {
     }
 
     public Integer getId() {
