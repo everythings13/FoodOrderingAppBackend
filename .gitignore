@@ -1,4 +1,4 @@
-.idea/workspace.xml
+
 *.class
 *.jar
 *.lst
@@ -8,7 +8,6 @@
 FoodOrderingApp-api/target
 FoodOrderingApp-api/src/main/resources/
 *.yaml
-.idea
 FoodOrderingApp-api/target
 FoodOrderingApp-db/target
 FoodOrderingApp-service/target
