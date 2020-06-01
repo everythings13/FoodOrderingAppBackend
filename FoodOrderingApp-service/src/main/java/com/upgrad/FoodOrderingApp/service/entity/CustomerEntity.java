@@ -1,6 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,6 +9,14 @@ import java.util.Objects;
 @Table(name ="customer")
 @NamedQueries(
         {
+            @NamedQuery(
+                name = "getCustomerByUUId",
+                query = "Select c from CustomerEntity c where c.uuid = :uuid"
+        ),
+        @NamedQuery(
+                name = "getCustomerById",
+                query = "Select c from CustomerEntity c where c.id = :id"
+        )}
             @NamedQuery(name= "customerByUuid", query="select cu from CustomerEntity cu where cu.uuid = :uuid"),
                 @NamedQuery(name= "customerById", query="select cu from CustomerEntity cu where cu.id = :id"),
                 @NamedQuery(name= "customerByEmail", query="select cu from CustomerEntity cu where cu.email = :email"),
@@ -85,7 +92,7 @@ public class CustomerEntity {
     }
 
     public void setLastName(String lastname) {
-        this.lastName = lastName;
+        this.lastName = lastname;
     }
 
     public String getEmail() {

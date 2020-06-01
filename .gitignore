@@ -1,6 +1,14 @@
-.idea
+
+*.class
+*.jar
+*.lst
+*.sql
+*.properties
+
+FoodOrderingApp-api/target
+FoodOrderingApp-api/src/main/resources/
+*.yaml
 FoodOrderingApp-api/target
 FoodOrderingApp-db/target
 FoodOrderingApp-service/target
 *.iml
-*.orig

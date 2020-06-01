@@ -97,9 +97,9 @@ public class RestaurantControllerReponseUtil {
         .itemType(ItemList.ItemTypeEnum.fromValue(item.getType()));
   }
 
-  public static PaymentResponse getPaymentListObject(Payment payment) {
+  public static PaymentResponse getPaymentListObject(PaymentEntity paymentEntity) {
     return new PaymentResponse()
-        .id(UUID.fromString(payment.getUuid()))
-        .paymentName(payment.getPaymentName());
+        .id(UUID.fromString(paymentEntity.getUuid()))
+        .paymentName(paymentEntity.getPaymentName());
   }
 }

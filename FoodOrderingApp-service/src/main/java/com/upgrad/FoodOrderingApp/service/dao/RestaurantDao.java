@@ -54,4 +54,9 @@ public class RestaurantDao {
       return null;
     }
   }
+
+  public Restaurant updateRestaurant(Restaurant restaurant) {
+    entityManager.merge(restaurant);
+    return restaurant;
+  }
 }

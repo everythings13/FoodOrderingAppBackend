@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
@@ -38,8 +39,44 @@ public class RestExceptionHandler {
                 new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.FORBIDDEN
         );
     }
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> categoryNotFoundException(CategoryNotFoundException cne) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(cne.getCode()).message(cne.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
+    }
 
-    @ExceptionHandler(SaveAddressException.class)
+    @ExceptionHandler(CouponNotFoundException.class)
+    public ResponseEntity<ErrorResponse> couponNotFoundException(CouponNotFoundException cpne) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(cpne.getCode()).message(cpne.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<ErrorResponse> RestaurantNotFoundException(
+            RestaurantNotFoundException exc) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> CategoryNotFoundException(CategoryNotFoundException exc) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidRatingException.class)
+    public ResponseEntity<ErrorResponse> InvalidRatingException(
+            InvalidRatingException exc) {
+        return new ResponseEntity<>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+	
+	@ExceptionHandler(SaveAddressException.class)
     public ResponseEntity<ErrorResponse> saveAddressException(SaveAddressException exc ,WebRequest request){
         return new ResponseEntity<ErrorResponse>(new ErrorResponse()
                 .code(exc.getCode())
@@ -54,4 +91,5 @@ public class RestExceptionHandler {
                 .message(exc.getErrorMessage()),
                 HttpStatus.NOT_FOUND);
     }
+	
 }

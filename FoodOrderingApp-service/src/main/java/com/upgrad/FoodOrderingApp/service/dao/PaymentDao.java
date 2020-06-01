@@ -1,6 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
-import com.upgrad.FoodOrderingApp.service.entity.Payment;
+import com.upgrad.FoodOrderingApp.service.entity.PaymentEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,10 +13,10 @@ import java.util.List;
 public class PaymentDao {
   @PersistenceContext private EntityManager entityManager;
 
-  public List<Payment> getAllPaymentMethods() {
+  public List<PaymentEntity> getAllPaymentMethods() {
     try {
       return this.entityManager
-          .createNamedQuery("getAllPaymentMethods", Payment.class)
+          .createNamedQuery("getAllPaymentMethods", PaymentEntity.class)
           .getResultList();
     } catch (NoResultException nre) {
       return Collections.emptyList();
