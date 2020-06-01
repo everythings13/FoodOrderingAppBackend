@@ -3,11 +3,20 @@ package com.upgrad.FoodOrderingApp.service.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name ="customer")
 @NamedQueries(
         {
+            @NamedQuery(
+                name = "getCustomerByUUId",
+                query = "Select c from CustomerEntity c where c.uuid = :uuid"
+        ),
+        @NamedQuery(
+                name = "getCustomerById",
+                query = "Select c from CustomerEntity c where c.id = :id"
+        ),
             @NamedQuery(name= "customerByUuid", query="select cu from CustomerEntity cu where cu.uuid = :uuid"),
                 @NamedQuery(name= "customerById", query="select cu from CustomerEntity cu where cu.id = :id"),
                 @NamedQuery(name= "customerByEmail", query="select cu from CustomerEntity cu where cu.email = :email"),
@@ -40,7 +49,7 @@ public class CustomerEntity {
     @Size(max = 50)
     private String email;
 
-    @Column(name = "CONTACT_NUMBER")
+    @Column(name = "contact_number")
     @Size(max = 30)
     private String contactnumber;
 
@@ -118,5 +127,19 @@ public class CustomerEntity {
         this.salt = salt;
     }
 
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerEntity that = (CustomerEntity) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(uuid, that.uuid) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(contactnumber, that.contactnumber) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(salt, that.salt);
+    }
 }
+
