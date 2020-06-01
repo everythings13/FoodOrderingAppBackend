@@ -1,7 +1,11 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @Entity
 @Table(name = "state")
@@ -17,15 +21,15 @@ import javax.validation.constraints.Size;
 public class StateEntity {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
-    @Size(max = 200)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(columnDefinition = "CHAR(200)")
     private String uuid;
 
-    @Column(name = "state_name")
+    @Column(name = "stateName")
     @Size(max = 30)
     private String stateName;
 

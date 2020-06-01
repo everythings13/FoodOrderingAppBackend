@@ -44,7 +44,6 @@
             <version>42.2.2</version>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
     <parent>
@@ -54,9 +53,9 @@
     </parent>
 
     <modules>
-        <module>FoodOrderingApp-api</module>
-        <module>FoodOrderingApp-service</module>
         <module>FoodOrderingApp-db</module>
+        <module>FoodOrderingApp-service</module>
+        <module>FoodOrderingApp-api</module>
     </modules>
 
 
