@@ -11,9 +11,4 @@ FoodOrderingApp-api/src/main/resources/
 FoodOrderingApp-api/target
 FoodOrderingApp-db/target
 FoodOrderingApp-service/target
-
-FoodOrderingApp-api/*.iml
-FoodOrderingApp-service/FoodOrderingApp-service.iml
-FoodOrderingApp-service/FoodOrderingApp-service.iml
-FoodOrderingApp-api/FoodOrderingApp-api.iml
-FoodOrderingApp-api/FoodOrderingApp-api.iml
+*.iml

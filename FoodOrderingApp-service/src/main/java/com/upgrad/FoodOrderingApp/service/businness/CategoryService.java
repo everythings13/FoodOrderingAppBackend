@@ -44,4 +44,9 @@ public class CategoryService {
             return itemDetailsList;
 
     }
+
+  /** @return get category by category uuid */
+  public Category getCategoryNameByCategoryUuid(String categoryId) {
+    return categoryDao.getCategoryByCategoryUuid(categoryId);
+  }
 }
