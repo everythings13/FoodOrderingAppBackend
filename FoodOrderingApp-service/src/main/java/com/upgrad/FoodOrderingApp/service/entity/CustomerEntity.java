@@ -82,8 +82,8 @@ public class CustomerEntity {
         return lastName;
     }
 
-    public void setLastName(String lastname) {
-        this.lastName = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
