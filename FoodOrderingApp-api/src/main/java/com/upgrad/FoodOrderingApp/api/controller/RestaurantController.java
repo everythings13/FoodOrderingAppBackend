@@ -6,6 +6,7 @@ import com.upgrad.FoodOrderingApp.api.model.RestaurantUpdatedResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.entity.Category;
+import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.Restaurant;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantCategory;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -75,7 +76,7 @@ public class RestaurantController {
     if (Strings.isNullOrEmpty(category_id) || category_id.equalsIgnoreCase(EMPTY_STRING_AS_JSON)) {
       throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
     }
-    Category category = categoryService.getCategoryNameByCategoryUuid(category_id);
+    CategoryEntity category = categoryService.getCategoryNameByCategoryUuid(category_id);
     if (Objects.isNull(category)) {
       throw new CategoryNotFoundException("CNF-002", "No category by this id");
     }
