@@ -1,10 +1,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.businness.OrderService;
-import com.upgrad.FoodOrderingApp.service.businness.PaymentService;
-import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.businness.*;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.*;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +31,7 @@ public class OrderController {
   @Autowired private CustomerService customerService;
   @Autowired private PaymentService paymentService;
   @Autowired private RestaurantService restaurantService;
+  @Autowired private AddressService addressService;
   /**
    * This Method is used to retrieve coupon details
    *
@@ -127,6 +125,7 @@ public class OrderController {
           RestaurantNotFoundException, AddressNotFoundException, ItemNotFoundException {
     String token = getToken(accessToken);
     CustomerEntity customer = customerService.getCustomer(token);
+
     OrderEntity order = new OrderEntity();
     if (customer != null) {
       OrderEntity orderEntity = getOrderListEntity(orderRequest, customer);
@@ -162,16 +161,17 @@ public class OrderController {
     order.setDiscount(orderRequest.getDiscount().doubleValue());
     order.setDate(new Timestamp(new Date().getTime()));
     order.setCustomer(customer);
-    AddressEntity addressEntity = new AddressEntity();
-    addressEntity.setUuid(orderRequest.getAddressId());
-    order.setAddress(addressEntity);
-
     CouponEntity couponEntity =
             orderService.getCouponByCouponName(orderRequest.getCouponId().toString());
     order.setCoupon(couponEntity);
     PaymentEntity paymentDetails =
-        paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());
+            paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());
     order.setPayment(paymentDetails);
+    AddressEntity addressEntity = addressService.getAddressByUUID(orderRequest.getAddressId(),customer);;
+    //addressEntity.setUuid(orderRequest.getAddressId());
+    order.setAddress(addressEntity);
+
+
     Restaurant restaurantEntity =
         restaurantService.getRestaurantByRestaurantUuid(orderRequest.getRestaurantId().toString());
     order.setRestaurant(restaurantEntity);
