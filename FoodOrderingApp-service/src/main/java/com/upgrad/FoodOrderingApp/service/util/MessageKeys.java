@@ -80,4 +80,5 @@ public final class MessageKeys {
 
   public static final String FIRST_NAME_SHOULD_NOT_BE_EMPTY =
       "First name field should not be empty";
+  public static final String THIS_CONTACT_NUMBER_IS_NOT_REGISTERED = "This contact number is not registered";
 }

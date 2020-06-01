@@ -161,8 +161,9 @@ public class OrderController {
     order.setDiscount(orderRequest.getDiscount().doubleValue());
     order.setDate(new Timestamp(new Date().getTime()));
     order.setCustomer(customer);
-    CouponEntity couponEntity =
-            orderService.getCouponByCouponName(orderRequest.getCouponId().toString());
+    CouponEntity couponEntity= orderService.getCouponDetailsByUUid(orderRequest.getCouponId().toString());
+    /*CouponEntity couponEntity =
+            orderService.getCouponByCouponName(orderRequest.getCouponId().toString());*/
     order.setCoupon(couponEntity);
     PaymentEntity paymentDetails =
             paymentService.getPaymentByUUID(orderRequest.getPaymentId().toString());

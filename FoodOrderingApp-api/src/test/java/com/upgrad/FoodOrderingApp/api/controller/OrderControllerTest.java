@@ -70,11 +70,11 @@ public class OrderControllerTest {
         final SaveOrderRequest saveOrderRequest = getSaveOrderRequest();
         when(mockPaymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString()))
                 .thenReturn(new PaymentEntity());
-  /*      when(mockAddressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity))
-                .thenReturn(new AddressEntity());*/
+        when(mockAddressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity))
+                .thenReturn(new AddressEntity());
         when(mockRestaurantService.getRestaurantByRestaurantUuid(saveOrderRequest.getRestaurantId().toString()))
                 .thenReturn(new Restaurant());
-        when(mockOrderService.getCouponByCouponName(saveOrderRequest.getCouponId().toString()))
+        when(mockOrderService.getCouponDetailsByUUid(saveOrderRequest.getCouponId().toString()))
                 .thenReturn(new CouponEntity());
 
         final OrderEntity orderEntity = new OrderEntity();
@@ -99,7 +99,7 @@ public class OrderControllerTest {
         verify(mockRestaurantService, times(1))
                 .getRestaurantByRestaurantUuid(saveOrderRequest.getRestaurantId().toString());
         verify(mockOrderService, times(1))
-                .getCouponByCouponName(saveOrderRequest.getCouponId().toString());
+                .getCouponDetailsByUUid(saveOrderRequest.getCouponId().toString());
         verify(mockOrderService, times(1)).saveOrder(any());
         verify(mockOrderService, times(1)).saveOrderItem(any());
     }
@@ -231,7 +231,7 @@ public class OrderControllerTest {
        verify(mockAddressService, times(1))
                 .getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);
         verify(mockRestaurantService, times(0)).getRestaurantByRestaurantUuid(anyString());
-        verify(mockOrderService, times(1)).getCouponByCouponName(anyString());
+        verify(mockOrderService, times(1)).getCouponDetailsByUUid(anyString());
         verify(mockOrderService, times(0)).saveOrder(any());
         verify(mockOrderService, times(0)).saveOrderItem(any());
     }
@@ -266,7 +266,7 @@ public class OrderControllerTest {
       verify(mockAddressService, times(1))
                 .getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);
         verify(mockRestaurantService, times(0)).getRestaurantByRestaurantUuid(anyString());
-        verify(mockOrderService, times(1)).getCouponByCouponName(anyString());
+        verify(mockOrderService, times(1)).getCouponDetailsByUUid(anyString());
         verify(mockOrderService, times(0)).saveOrder(any());
         verify(mockOrderService, times(0)).saveOrderItem(any());
     }
@@ -304,7 +304,7 @@ public class OrderControllerTest {
                 .getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);*/
         verify(mockRestaurantService, times(1))
                 .getRestaurantByRestaurantUuid(saveOrderRequest.getRestaurantId().toString());
-        verify(mockOrderService, times(1)).getCouponByCouponName(anyString());
+        verify(mockOrderService, times(1)).getCouponDetailsByUUid(anyString());
         verify(mockOrderService, times(0)).saveOrder(any());
         verify(mockOrderService, times(0)).saveOrderItem(any());
     }

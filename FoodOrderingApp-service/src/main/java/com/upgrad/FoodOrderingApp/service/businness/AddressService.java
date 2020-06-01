@@ -156,10 +156,9 @@ public class AddressService {
         }
 
         CustomerAddressEntity customerAddressEntity = customerAddressDao.getCustomerAddressByAddress(addressEntity);
-
-        if(customerAddressEntity.getCustomerEntity().getUuid() == customerEntity.getUuid()){
+        if(customerAddressEntity == null || customerAddressEntity.getCustomerEntity().getUuid() == customerEntity.getUuid()) {
             return addressEntity;
-        }else{
+        } else{
             throw new AuthorizationFailedException(ATHR_004,CUSTOMER_NOT_AUTHORIZED_TO_UPDATE);
         }
 

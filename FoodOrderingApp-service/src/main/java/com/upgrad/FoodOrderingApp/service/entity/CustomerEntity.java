@@ -40,7 +40,6 @@ public class CustomerEntity {
     private String firstName;
 
     @Column(name = "LASTNAME")
-    @NotNull
     @Size(max = 30)
     private String lastName;
 
