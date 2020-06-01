@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 .idea/workspace.xml
 *.class
 *.jar
@@ -10,13 +8,13 @@
 FoodOrderingApp-api/target
 FoodOrderingApp-api/src/main/resources/
 *.yaml
-=======
-.idea
->>>>>>> feature/addressController
-=======
 .idea
 FoodOrderingApp-api/target
 FoodOrderingApp-db/target
 FoodOrderingApp-service/target
 
->>>>>>> master
+FoodOrderingApp-api/*.iml
+FoodOrderingApp-service/FoodOrderingApp-service.iml
+FoodOrderingApp-service/FoodOrderingApp-service.iml
+FoodOrderingApp-api/FoodOrderingApp-api.iml
+FoodOrderingApp-api/FoodOrderingApp-api.iml
